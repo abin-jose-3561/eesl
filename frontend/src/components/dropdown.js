@@ -10,19 +10,31 @@ const Dropdown = ()=> {
     const [circle,setCircle] = useState([])
     const [division,setDivision] = useState([])
     const [subdivision,setSubdivision] = useState([])
-    const [section,setSection] = useState([])
+    // const [section,setSection] = useState([])
     
     const [selecteddiscom,setSelectedDiscom] = useState(null)
     const [selectedzone,setSelectedZone] = useState(null)
     const [selectedcircle,setSelectedCircle] = useState(null)
     const [selecteddivision,setSelectedDivision] = useState(null)
     const [selectedsubdivision,setSelectedSubDivision] = useState(null)
-    const [selectedsection,setSelectedSection] = useState('')
+    // const [selectedsection,setSelectedSection] = useState('')
 
-  const [recentlyselected, setRecentlyselected] = useState('')
+//   const [optiondiscom, setOptiondiscom] = useState(null)
+//   const [optionzone, setOptionzone] = useState(null)
+//   const [optioncircle, setOptioncircle] = useState(null)
+//   const [optiondivision, setOptiondivision] = useState(null)
+//   const [optionsubdivision, setOptionsubdivision] = useState(null)
+
+  const [optionname, setOptionname] = useState({
+    optiondiscom : '',
+    optionzone : '',
+    optioncircle : '',
+    optiondivision : '',
+    optionsubdivision : ''
+  })
+
   const[showtable,setShowtable] = useState(false)
-  const[optionname, setOptionname]= useState('')
-
+ 
 
 
 //to get the values of discom
@@ -48,132 +60,212 @@ const Dropdown = ()=> {
         fetchStates();
     },[]);
 
+  
 // when a discom is selected to get the zone dropdown values
 const handleStateChange = async (event, value) => {
-    const selectedDiscoms = value.map((v) => v.value); // get an array of selected values
-    setSelectedDiscom(selectedDiscoms);
-    console.log(selectedDiscoms)
+    let Discoms;
+    let Labeldiscom
+    if (value.some((v) => v.value === "All")) {
+        Discoms = discom.filter((v) => v.office_id !== "All").map((v) => v.sequence_id).join(",");
+        setSelectedDiscom(Discoms);
 
-    const offices = value.map((v) => v.label); // get an array of selected labels
-    setRecentlyselected(offices.join(", ")); // join the array with a comma and space separator
-    setOptionname("discom");
-  
+        Labeldiscom = discom.filter((v) => v.office_id !== "All").map((v) => v.office_id).join(",");
+        // setOptiondiscom(Labeldiscom)
+        setOptionname({
+            ...optionname,
+            optiondiscom : Labeldiscom
+        });
+      } 
+      else{
+    Discoms = value.map((v) => v.value); // get an array of selected values
+    setSelectedDiscom(Discoms);
+    console.log(Discoms)
+
+    Labeldiscom = value.map((v) => v.label); // get an array of selected labels
+    // setOptiondiscom(Labeldiscom.join(",")); // join the array with a comma and space separator
+    setOptionname({
+        ...optionname,
+        optiondiscom : Labeldiscom.join(",")
+    });
+      }
     setShowtable(false);
-    
-    
-    const response = await fetch(`http://localhost:5000/discom/discom/${selectedDiscoms}`);
+    const response = await fetch(`http://localhost:5000/discom/discom/${Discoms}`);
     const data = await  response.json();
     setZone(data);
-    const response1 = await fetch(`http://localhost:5000/discom/zone/${selectedDiscoms}`);
+    const response1 = await fetch(`http://localhost:5000/discom/zone/${Discoms}`);
     const data1 = await  response1.json();
     setCircle(data1);
-    const response2 = await fetch(`http://localhost:5000/discom/circle/${selectedDiscoms}`);
+    const response2 = await fetch(`http://localhost:5000/discom/circle/${Discoms}`);
     const data2 = await  response2.json();
     setDivision(data2);
-    const response3 = await fetch(`http://localhost:5000/discom/division/${selectedDiscoms}`);
+    const response3 = await fetch(`http://localhost:5000/discom/division/${Discoms}`);
     const data3 = await  response3.json();
     setSubdivision(data3);
   };
 
     console.log(selecteddiscom)
-    console.log("option name",optionname)
+  
 
 // when a zone is selected to get the circle dropdown values
+const handleZoneChange = async (event, value) => {
+   let Zones;
+   let Labelzone;
+    if (value.some((v) => v.value === "All")) {
+        Zones = zone.filter((v) => v.office_id !== "All").map((v) => v.sequence_id).join(",");
+        setSelectedZone(Zones);
 
-    const handleZoneChange = async (event,value) => {
-        const selectedZones =  value.map((v) => v.value); // get an array of selected values
-        setSelectedZone(selectedZones)
+        Labelzone = zone.filter((v) => v.office_id !== "All").map((v) => v.office_id).join(",");
+        // setOptionzone(Labelzone)
+        setOptionname({
+            ...optionname,
+            optionzone : Labelzone});
+      }
+      else {
+      // otherwise, get an array of selected values and labels as before
+      Zones = value.map((v) => v.value);
+      setSelectedZone(Zones);
 
-        const offices = value.map((v) => v.label); // get an array of selected labels
-        setRecentlyselected(offices.join(", "))
-        setOptionname('zone')
+      Labelzone = value.map((v) => v.label);
+    //   setOptionzone(Labelzone.join(","));
+    setOptionname({
+        ...optionname,
+        optionzone : Labelzone.join(", ")});
+      }
 
-        
-        setShowtable(false)
+    setShowtable(false);
 
-        const response = await fetch(`http://localhost:5000/zone/zone/${selectedZones}`);
-        const data = await  response.json();
-        setCircle(data)
-        const response1 = await fetch(`http://localhost:5000/zone/circle/${selectedZones}`);
-        const data1 = await  response1.json();
-        setDivision(data1)
-        const response2 = await fetch(`http://localhost:5000/zone/division/${selectedZones}`);
-        const data2 = await  response2.json();
-        setSubdivision(data2)
-    };
+    const response = await fetch(
+      `http://localhost:5000/zone/zone/${Zones}` );
+    const data = await response.json();
+    setCircle(data);
+    const response1 = await fetch(
+      `http://localhost:5000/zone/circle/${Zones}`);
+    const data1 = await response1.json();
+    setDivision(data1);
 
-    console.log(selectedzone)
+    const response2 = await fetch(
+      `http://localhost:5000/zone/division/${Zones}`);
+    const data2 = await response2.json();
+    setSubdivision(data2);
+};
+
+console.log(selectedzone)
+
+
 
 
 // when a circle is selected to get the division dropdown values
 
     const handleCircleChange = async (event,value) => {
-        const selectedCircles = value.map((v) => v.value); // get an array of selected values
-        setSelectedCircle(selectedCircles)
+        let Circles;
+        let Labelcircle;
+        if (value.some((v) => v.value === "All")) {
+            Circles = circle.filter((v) => v.office_id !== "All").map((v) => v.sequence_id).join(",");
+            setSelectedCircle(Circles);
 
-        const offices = value.map((v) => v.label);
-        setRecentlyselected(offices)
-        setOptionname('circle')
+        Labelcircle = circle.filter((v) => v.office_id !== "All").map((v) => v.office_id).join(",");
+        // setOptioncircle(Labelcircle);
+        setOptionname({
+            ...optionname,
+            optioncircle : Labelcircle
+        });
+          }
+          else {
+          // otherwise, get an array of selected values and labels as before
 
-        
-        setShowtable(false)
+        Circles = value.map((v) => v.value); // get an array of selected values
+        setSelectedCircle(Circles)
 
-        const response =await fetch(`http://localhost:5000/circle/circle/${selectedCircles}`);
+        Labelcircle = value.map((v) => v.label);
+        // setOptioncircle(Labelcircle.join(","));
+        setOptionname({
+            ...optionname,
+            optioncircle : Labelcircle.join(",")
+        });
+          }
+
+        setShowtable(false);
+        const response =await fetch(`http://localhost:5000/circle/circle/${Circles}`);
         const data = await response.json();
         setDivision(data)
-        const response1 =await fetch(`http://localhost:5000/circle/division/${selectedCircles}`);
+        const response1 =await fetch(`http://localhost:5000/circle/division/${Circles}`);
         const data1 = await response1.json();
         setSubdivision(data1)
     };
     console.log(selectedcircle)
-
+   
 
  // when a division is selected to get the subdivision dropdown values
      const handleDivisionChange = async (event,value) => {
-        const selectedDivs = value.map((v) => v.value);
-        setSelectedDivision(selectedDivs)
+        let Divisions;
+        let Labeldiv;
+       
+        if (value.some((v) => v.value === "All")) {
+            Divisions = division.filter((v) => v.office_id !== "All").map((v) => v.sequence_id).join(",");
+            setSelectedDivision(Divisions);
 
-        const offices = value.map((v) => v.label);
-        setRecentlyselected(offices)
-        setOptionname('division')
+        Labeldiv = division.filter((v) => v.office_id !== "All").map((v) => v.office_id).join(",");
+        // setOptiondivision(Labeldiv);
+        setOptionname({
+            ...optionname,
+            optiondivision : Labeldiv});
+
+        console.log("labeldiv",Labeldiv)
+          }
+          else {
+          // otherwise, get an array of selected values and labels as before
+        Divisions = value.map((v) => v.value);
+        setSelectedDivision(Divisions)
+
+        Labeldiv = value.map((v) => v.label);
+        // setOptiondivision(Labeldiv.join(","))
+        setOptionname({
+            ...optionname,
+            optiondivision : Labeldiv.join(", ")});
+          }
 
         setShowtable(false)
-        const response =await fetch(`http://localhost:5000/division/division/${selectedDivs}`);
+        const response =await fetch(`http://localhost:5000/division/division/${Divisions}`);
             const data = await response.json();
            setSubdivision(data)
            
     };
+    console.log(division)
     console.log(selecteddivision)
-
+   
 
 // when a subdivision is selected to get the section dropdown values
 const handleSubdivisionChange = async (event,value) => {
-    const selectedSubs = value.map((v) => v.value);
-    setSelectedSubDivision(selectedSubs)
-    
-    const offices = value.map((v) => v.label);
-        setRecentlyselected(offices)
-        setOptionname('subdivision')
+    let Subdivisions;
+    let Labelsub
+    if (value.some((v) => v.value === "All")) {
+        Subdivisions = subdivision.filter((v) => v.office_id !== "All").map((v) => v.sequence_id).join(",");
+        setSelectedSubDivision(Subdivisions);
 
-    setSelectedSection('')
+        Labelsub = subdivision.filter((v) => v.office_id !== "All").map((v) => v.office_id).join(",");
+        // setOptionsubdivision(Labelsub);
+        setOptionname({
+            ...optionname,
+            optionsubdivision : Labelsub});
+      }
+      else {
+      // otherwise, get an array of selected values and labels as before
+    Subdivisions = value.map((v) => v.value);
+    setSelectedSubDivision(Subdivisions)
+    
+    Labelsub = value.map((v) => v.label);
+    // setOptionsubdivision(Labelsub.join(","))
+    setOptionname({
+        ...optionname,
+        optionsubdivision : Labelsub.join(", ")});
+       
+      }
     setShowtable(false)
 
-    // const response =await fetch(`http://localhost:5000/sub/${selectedSub}`);
-    //     const data = await response.json();
-    //    setSection(data)
-       
 };
+
 console.log(selectedsubdivision)
-
-// // when a subdivision is selected to get the section dropdown values
-// const handleSectionChange = async event => {
-//     const selectedSection = event.target.value;
-//     setSelectedSection(selectedSection)
-//     setRecentlyselected(selectedSection)
-//     setShowtable(false)
-// };
-console.log("recent",recentlyselected)
-
+console.log(optionname)
 
   return (
 
@@ -184,7 +276,13 @@ console.log("recent",recentlyselected)
       disablePortal
       id="combo-box-demo"
       onChange={handleStateChange}
-      options={discom.map(option => ({value:option.sequence_id, label: option.office_id}))}
+      options={[
+        { value: "All", label: "ALL" },
+        ...discom.map((option) => ({
+          value: option.sequence_id,
+          label: option.office_id,
+        })),
+      ]}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Discom" />}
     />
@@ -193,15 +291,20 @@ console.log("recent",recentlyselected)
 &nbsp;&nbsp;&nbsp;&nbsp;
 
 <Autocomplete
-    multiple
-      disablePortal
-      id="combo-box-demo"
-      onChange={handleZoneChange}
-      options={zone.map(option => ({value:option.sequence_id, label: option.office_id}))}
-      sx={{ width: 200 }}
-      renderInput={(params) => <TextField {...params} label="Zone" />}
-      
-    />
+  multiple
+  disablePortal
+  id="combo-box-demo"
+  onChange={handleZoneChange}
+  options={[
+    { value: "All", label: "ALL" },
+    ...zone.map((option) => ({
+      value: option.sequence_id,
+      label: option.office_id,
+    })),
+  ]}
+  sx={{ width: 200 }}
+  renderInput={(params) => <TextField {...params} label="Zone" />}
+/>
 
 
  &nbsp;&nbsp;&nbsp;&nbsp;
@@ -211,7 +314,13 @@ console.log("recent",recentlyselected)
       disablePortal
       id="combo-box-demo"
       onChange={handleCircleChange}
-      options={circle.map(option => ({value:option.sequence_id, label: option.office_id}))}
+      options={[
+        { value: "All", label: "ALL" },
+        ...circle.map((option) => ({
+          value: option.sequence_id,
+          label: option.office_id,
+        })),
+      ]}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Circle" />}
      
@@ -223,7 +332,13 @@ console.log("recent",recentlyselected)
       disablePortal
       id="combo-box-demo"
       onChange={handleDivisionChange}
-      options={division.map(option => ({value:option.sequence_id, label: option.office_id}))}
+      options={[
+        { value: "All", label: "ALL" },
+        ...division.map((option) => ({
+          value: option.sequence_id,
+          label: option.office_id,
+        })),
+      ]}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Division" />}
  
@@ -236,7 +351,13 @@ console.log("recent",recentlyselected)
       disablePortal
       id="combo-box-demo"
       onChange={handleSubdivisionChange}
-      options={subdivision.map(option => ({value:option.sequence_id, label: option.office_id}))}
+      options={[
+        { value: "All", label: "ALL" },
+        ...subdivision.map((option) => ({
+          value: option.sequence_id,
+          label: option.office_id,
+        })),
+      ]}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="SUB Division" />}
 
@@ -260,8 +381,8 @@ console.log("recent",recentlyselected)
         <Button variant="contained"  type="submit" value="Fetch" onClick={(e) => setShowtable(true)}>FETCH</Button>
         <br/><br/>
        
-        {showtable && <DisplayData recent={recentlyselected} option={optionname}/> }
-    
+        {/* {showtable && <DisplayData discom={optiondiscom} zone={optionzone} circle={optioncircle} division={optiondivision} subdivision={optionsubdivision} /> } */}
+        {showtable && <DisplayData optionname={optionname} /> }
 
         </Box>
   )

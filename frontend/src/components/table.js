@@ -52,15 +52,27 @@ const Button = tw.button`
   transition-colors
 `;
 
-const DisplayData = ({recent,option}) =>{
+const DisplayData = ({optionname}) =>{
 
-    console.log("recent table",recent,option)
+    console.log("OptionNames",optionname)
 
   const [products, setProducts] = useState([]);
 
   const fetchProducts = async () => {
+    
+  //   const response = await axios
+  //     .get(`http://localhost:5000/table/${discom}/${zone}/${circle}/${division}/${subdivision}`)
+  //     .catch((err) => console.log(err));
+
+  //   if (response) {
+  //     const products = response.data;
+  //     console.log("Products: ", products);
+  //     setProducts(products);
+  //   }
+  // };
+    const queryparams=`?discom=${optionname.optiondiscom}&zone=${optionname.optionzone}&circle=${optionname.optioncircle}&division=${optionname.optiondivision}&subdivision=${optionname.optionsubdivision}`;
     const response = await axios
-      .get(`http://localhost:5000/table/${option}/${recent}`)
+      .get(`http://localhost:5000/table/tabb${queryparams}`)
       .catch((err) => console.log(err));
 
     if (response) {

@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const pool = require("./db");
 
+
 //middleware
 app.use(cors());
 app.use(express.json()); //req.body
@@ -43,6 +44,7 @@ app.get("/:column", async (req, res) => {
 
 //To set all dropdown boxes when discom is changed
   app.get("/discom/:column/:id", async (req, res) => {
+    
     try {
     const  { column, id } =req.params;
     console.log(id)
@@ -92,8 +94,8 @@ app.get("/:column", async (req, res) => {
 app.get("/zone/:column/:id", async (req, res) => {
   try {
   const  { column, id } =req.params;
-  console.log(id)
-  
+console.log(column,id)
+
   column === "zone"?
     (data = await pool.query(
     `SELECT * FROM org_hier WHERE parent_nin = ANY($1::text[])`,
@@ -127,7 +129,7 @@ SELECT t3.sequence_id FROM org_hier t3 WHERE t3.nin_type = 'ZONE' AND t3.sequenc
 app.get("/circle/:column/:id", async (req, res) => {
   try {
   const  { column, id } =req.params;
-  console.log(id)
+
   
   column === "circle"?
     (data = await pool.query(
@@ -153,7 +155,6 @@ app.get("/circle/:column/:id", async (req, res) => {
   app.get("/division/division/:id", async (req, res) => {
     
     const  { id } =req.params;
-    console.log(id)
     try {
       const {rows} = await pool.query(`SELECT * FROM org_hier WHERE parent_nin = ANY($1::text[])`,[id.split(',')]);
       res.json(rows);
@@ -177,19 +178,77 @@ app.get("/circle/:column/:id", async (req, res) => {
   // });
 
 
-  app.get("/table/:optionname/:value", async (req, res) => {
-    
-    const  { optionname,value } =req.params;
-    console.log("option",optionname,value)
-    try {
-      const {rows} = await pool.query( `select * from tabledata where ${optionname} = '${value}'`);
-      res.json(rows);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Error fetching data from database');
+  app.get("/table/tabb", async (req, res) => {
+    const { discom, zone, circle, division, subdivision } = req.query;
+    console.log("op", discom, zone, circle, division, subdivision);
+    let query = "SELECT * FROM tabledata WHERE 1=1 ";
+    // let params = [];
+    console.log(typeof discom, zone, circle, division, subdivision);
+  
+    if (discom) {
+      const discomArray = discom.split(",");
+      if (discomArray.length > 0) {
+        query += `AND discom IN (${discomArray
+          .map((d) => `'${d.trim()}'`)
+          .join(",")}) `;
+  
+        // params.push(...discomArray);
+      }
     }
+  
+    if (zone) {
+      const zoneArray = zone.split(",");
+      if (zoneArray.length > 0) {
+        query += `AND zone IN (${zoneArray
+          .map((d) => `'${d.trim()}'`)
+          .join(",")}) `;
+        // params.push(...zoneArray);
+      }
+    }
+  
+    if (circle) {
+      const circleArray = circle.split(",");
+      if (circleArray.length > 0) {
+        query += `AND circle IN (${circleArray
+          .map((d) => `'${d.trim()}'`)
+          .join(",")}) `;
+        // params.push(...circleArray);
+      }
+    }
+  
+    if (division) {
+      const divisionArray = division.split(",");
+      if (divisionArray.length > 0) {
+        query += `AND division IN (${divisionArray
+          .map((d) => `'${d.trim()}'`)
+          .join(",")}) `;
+        // params.push(...divisionArray);
+      }
+    }
+  
+    if (subdivision) {
+      const subdivisionArray = subdivision.split(",");
+      if (subdivisionArray.length > 0) {
+        query += `AND subdivision IN (${subdivisionArray
+          .map((d) => `'${d.trim()}'`)
+          .join(",")}) `;
+        // params.push(...subdivisionArray);
+      }
+    }
+    console.log(query);
+  
+    await pool
+      .query(query)
+      .then((result) => {
+        res.json(result.rows);
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+      });
   });
-
+  
   app.listen(5000, () => {
     console.log("server has started on port 5000");
   });
+  
