@@ -247,6 +247,160 @@ app.get("/circle/:column/:id", async (req, res) => {
         res.status(500).send("Internal Server Error");
       });
   });
+
+
+
+
+  /************ NETWORK HIERARACHY **************/
+  app.get("/net/:column", async (req, res) => {
+    try {
+    const { column } = req.params;
+    column === "gss"
+        ? (data = await pool.query(
+            `select * from net_hier where nin_type ='GSS'`,))
+        : null;
+  
+    column === "thirtythree"
+        ? (data = await pool.query(
+            `select * from net_hier where nin_type ='33 KV FEEDER'`,))
+        : null;
+  
+    column === "substation"
+        ? (data = await pool.query(
+            `select * from net_hier where nin_type ='SUBSTATION'`,))
+        : null;
+      
+    column === "eleven"
+        ? (data = await pool.query(
+            `select * from net_hier where nin_type ='11 KV FEEDER'`,))
+        : null;
+    column === "dt"
+        ? (data = await pool.query(
+            `select * from net_hier where nin_type ='DT'`,))
+        : null;
+    res.json(data.rows);
+      } catch (error) {
+      console.error(error.message);
+    }
+  });
+
+  //To set all dropdown boxes when gss is changed
+  app.get("/gss/:column/:id", async (req, res) => {
+    
+    try {
+    const  { column, id } =req.params;
+    console.log(id)
+    
+    column === "gss"?
+      (data = await pool.query(
+      `SELECT * FROM net_hier WHERE parent_nin = ANY($1::text[])`,
+        [id.split(',')])
+      ) : null;
+
+      column === "thirtythree"?
+      (data = await pool.query(
+      `SELECT * FROM net_hier t1 WHERE t1.nin_type IN ('SUBSTATION') AND t1.parent_nin IN (
+         SELECT t2.sequence_id FROM net_hier t2 WHERE t2.nin_type = '33 KV FEEDER' AND t2.parent_nin IN (
+           SELECT t3.sequence_id FROM net_hier t3 WHERE t3.nin_type = 'GSS' AND t3.sequence_id = ANY($1::text[])))`,
+        [id.split(',')])
+      ) : null;
+
+      column === "substation"?
+      (data = await pool.query(
+      `SELECT * FROM net_hier t1 WHERE t1.nin_type IN ('11 KV FEEDER') AND t1.parent_nin IN (
+         SELECT t3.sequence_id FROM net_hier t3 WHERE t3.nin_type = 'SUBSTATION' AND t3.parent_nin IN(
+            SELECT t4.sequence_id FROM net_hier t4 WHERE t4.nin_type = '33 KV FEEDER'AND t4.parent_nin IN(
+               SELECT t5.sequence_id FROM net_hier t5 WHERE t5.nin_type = 'GSS' AND t5.sequence_id = ANY($1::text[]))))`,
+        [id.split(',')])
+      ) : null;
+
+      column === "eleven"?
+      (data = await pool.query(
+      `SELECT * FROM net_hier t1 WHERE t1.nin_type IN ('DT') AND t1.parent_nin IN (
+        SELECT t2.sequence_id FROM net_hier t2 WHERE t2.nin_type = '11 KV FEEDER' AND t2.parent_nin IN (
+            SELECT t3.sequence_id FROM net_hier t3 WHERE t3.nin_type = 'SUBSTATION' AND t3.parent_nin IN(
+               SELECT t4.sequence_id FROM net_hier t4 WHERE t4.nin_type = '33 KV FEEDER' AND t4.parent_nin IN(
+                  SELECT t4.sequence_id FROM net_hier t4 WHERE t4.nin_type = 'GSS' AND t4.sequence_id = ANY($1::text[])))))`,
+        [id.split(',')])
+      ) : null;
+
+      res.json(data.rows);
+    } catch (error) {
+    console.error(error.message);
+  }
+});
+
+
+//To set all dropdown boxes when 33kv is changed
+app.get("/thirtythree/:column/:id", async (req, res) => {
+  try {
+  const  { column, id } =req.params;
+console.log(column,id)
+
+  column === "thirtythree"?
+    (data = await pool.query(
+    `SELECT * FROM net_hier WHERE parent_nin = ANY($1::text[])`,
+      [id.split(',')])
+    ) : null;
+
+    column === "substation"?
+    (data = await pool.query(
+      `SELECT * FROM net_hier t1 WHERE t1.nin_type IN ('SUBSTATION') AND t1.parent_nin IN (
+        SELECT t2.sequence_id FROM net_hier t2 WHERE t2.nin_type = '33 KV FEEDER' AND t2.sequence_id = ANY($1::text[]))`,
+      [id.split(',')])
+    ) : null;
+
+    column === "eleven"?
+    (data = await pool.query(
+      `SELECT * FROM net_hier t1 WHERE t1.nin_type IN ('11 KV FEEDER') AND t1.parent_nin IN (
+        SELECT t2.sequence_id FROM net_hier t2 WHERE t2.nin_type = 'SUBSTATION' AND t2.parent_nin IN(
+          SELECT t3.sequence_id FROM net_hier t3 WHERE t3.nin_type = '33 KV FEEDER' AND t3.sequence_id = ANY($1::text[])))`,
+      [id.split(',')])
+    ) : null;
+
+    res.json(data.rows);
+  } catch (error) {
+  console.error(error.message);
+}
+});
+
+//To set all dropdown boxes when circle is changed
+app.get("/substation/:column/:id", async (req, res) => {
+  try {
+  const  { column, id } =req.params;
+
+  
+  column === "substation"?
+    (data = await pool.query(
+    `SELECT * FROM net_hier WHERE parent_nin = ANY($1::text[])`,
+      [id.split(',')])
+    ) : null;
+
+    column === "11 KV FEEDER"?
+    (data = await pool.query(
+      `SELECT * FROM net_hier t1 WHERE t1.nin_type IN ('11 KV FEEDER') AND t1.parent_nin IN (
+        SELECT t2.sequence_id FROM net_hier t2 WHERE t2.nin_type = 'SUBSTATION' AND t2.sequence_id = ANY($1::text[]))`,
+      [id.split(',')])
+    ) : null;
+
+
+    res.json(data.rows);
+  } catch (error) {
+  console.error(error.message);
+}
+});
+
+app.get("/eleven/eleven/:id", async (req, res) => {
+    
+  const  { id } =req.params;
+  try {
+    const {rows} = await pool.query(`SELECT * FROM net_hier WHERE parent_nin = ANY($1::text[])`,[id.split(',')]);
+    res.json(rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Error fetching data from database');
+  }
+});
   
   app.listen(5000, () => {
     console.log("server has started on port 5000");

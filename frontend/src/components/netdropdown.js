@@ -4,178 +4,251 @@ import Autocomplete from '@mui/material/Autocomplete';
 import DisplayData from './table'
 import { Box, Button } from '@mui/material';
 
-const Dropdown = ()=> {
-    const [GSS,setGSS] = useState([])
+const NetDropdown = ()=> {
+    const [gss,setGss] = useState([])
     const [thirtythree,setThirtythree] = useState([])
     const [substation,setSubstation] = useState([])
     const [eleven,setEleven] = useState([])
-    const [DT,setDT] = useState([])
-    // const [section,setSection] = useState([])
-    
-    const [selecteddiscom,setSelectedDiscom] = useState([])
-    const [selectedzone,setSelectedZone] = useState([])
-    const [selectedcircle,setSelectedCircle] = useState(null)
-    const [selecteddivision,setSelectedDivision] = useState(null)
-    const [selectedsubdivision,setSelectedSubDivision] = useState(null)
-    // const [selectedsection,setSelectedSection] = useState('')
+    const [dt,setDt] = useState([])
+ 
+    const [selectedgss,setSelectedGss] = useState(null)
+    const [selectedthirtythree,setSelectedThirtythree] = useState(null)
+    const [selectedsubstation,setSelectedSubstation] = useState(null)
+    const [selectedeleven,setSelectedEleven] = useState(null)
+    const [selecteddt,setSelectedDt] = useState(null)
 
-  const [optiondiscom, setOptiondiscom] = useState(null)
-  const [optionzone, setOptionzone] = useState(null)
-  const [optioncircle, setOptioncircle] = useState(null)
-  const [optiondivision, setOptiondivision] = useState(null)
-  const [optionsubdivision, setOptionsubdivision] = useState(null)
+
+  const [optionname, setOptionname] = useState({
+    optionggs : '',
+    optionthirtythree : '',
+    optionsubstation : '',
+    optioneleven : '',
+    optiondt : ''
+  })
 
   const[showtable,setShowtable] = useState(false)
  
 
 
-
 //to get the values of discom
     useEffect(()=>{
         const fetchStates =async () =>{
-            const response =await fetch("http://localhost:5000/discom");
+            const response =await fetch("http://localhost:5000/net/gss");
             const data = await response.json();
-            setDiscom(data)
-            const response1 =await fetch("http://localhost:5000/zone");
+            setGss(data)
+            const response1 =await fetch("http://localhost:5000/net/thirtythree");
             const data1 = await response1.json();
-            setZone(data1)
-            const response2 =await fetch("http://localhost:5000/circle");
+            setThirtythree(data1)
+            const response2 =await fetch("http://localhost:5000/net/substation");
             const data2 = await response2.json();
-            setCircle(data2)
-            const response3 =await fetch("http://localhost:5000/division");
+            setSubstation(data2)
+            const response3 =await fetch("http://localhost:5000/net/eleven");
             const data3 = await response3.json();
-            setDivision(data3)
-            const response4 =await fetch("http://localhost:5000/subdivision");
+            setEleven(data3)
+            const response4 =await fetch("http://localhost:5000/net/dt");
             const data4 = await response4.json();
-            setSubdivision(data4)
+            setDt(data4)
 
         };
         fetchStates();
     },[]);
 
+  
 // when a discom is selected to get the zone dropdown values
-const handleStateChange = async (event, value) => {
-    const selectedDiscoms = value.map((v) => v.value); // get an array of selected values
-    setSelectedDiscom(selectedDiscoms);
-    console.log(selectedDiscoms)
+const handleGssChange = async (event, value) => {
+    let gsss;
+    let Labelgss
+    if (value.some((v) => v.value === "All")) {
+        gsss = gss.filter((v) => v.nin_id !== "All").map((v) => v.sequence_id).join(",");
+        setSelectedGss(gsss);
 
-    const offices = value.map((v) => v.label); // get an array of selected labels
-    setOptiondiscom(offices.join(",")); // join the array with a comma and space separator
+        Labelgss = gss.filter((v) => v.nin_id !== "All").map((v) => v.nin_id).join(",");
+        setOptionname({
+            ...optionname,
+            optiongss : Labelgss
+        });
+      } 
+      else{
+    gsss = value.map((v) => v.value); // get an array of selected values
+    setSelectedGss(gsss);
+    console.log(gsss)
+
+    Labelgss = value.map((v) => v.label); // get an array of selected labels
+    setOptionname({
+        ...optionname,
+        optiongss : Labelgss.join(",")
+    });
+      }
     setShowtable(false);
-    
-    
-    const response = await fetch(`http://localhost:5000/discom/discom/${selectedDiscoms}`);
+    const response = await fetch(`http://localhost:5000/gss/gss/${gsss}`);
     const data = await  response.json();
-    setZone(data);
-    const response1 = await fetch(`http://localhost:5000/discom/zone/${selectedDiscoms}`);
+    setThirtythree(data);
+    const response1 = await fetch(`http://localhost:5000/gss/thirtythree/${gsss}`);
     const data1 = await  response1.json();
-    setCircle(data1);
-    const response2 = await fetch(`http://localhost:5000/discom/circle/${selectedDiscoms}`);
+    setSubstation(data1);
+    const response2 = await fetch(`http://localhost:5000/gss/substation/${gsss}`);
     const data2 = await  response2.json();
-    setDivision(data2);
-    const response3 = await fetch(`http://localhost:5000/discom/division/${selectedDiscoms}`);
+    setEleven(data2);
+    const response3 = await fetch(`http://localhost:5000/gss/eleven/${gsss}`);
     const data3 = await  response3.json();
-    setSubdivision(data3);
+    setDt(data3);
   };
 
-    console.log(selecteddiscom)
+    console.log(selectedgss)
+  
+
+// when a Thirtythree is selected to get the circle dropdown values
+const handleThirtythreeChange = async (event, value) => {
+   let thirtythrees;
+   let Labelthirtythree;
+    if (value.some((v) => v.value === "All")) {
+        thirtythrees = thirtythree.filter((v) => v.nin_id !== "All").map((v) => v.sequence_id).join(",");
+        setSelectedThirtythree(thirtythrees);
+
+        Labelthirtythree = thirtythree.filter((v) => v.nin_id !== "All").map((v) => v.nin_id).join(",");
+        setOptionname({
+            ...optionname,
+            optionthirtythree : Labelthirtythree});
+      }
+      else {
+      // otherwise, get an array of selected values and labels as before
+      thirtythrees = value.map((v) => v.value);
+      setSelectedThirtythree(thirtythrees);
+
+      Labelthirtythree = value.map((v) => v.label);
+    setOptionname({
+        ...optionname,
+        optionthirtythree : Labelthirtythree.join(", ")});
+      }
+
+    setShowtable(false);
+
+    const response = await fetch(
+      `http://localhost:5000/thirtythree/thirtythree/${thirtythrees}` );
+    const data = await response.json();
+    setSubstation(data);
+    const response1 = await fetch(
+      `http://localhost:5000/thirtythree/Substation/${thirtythrees}`);
+    const data1 = await response1.json();
+    setEleven(data1);
+
+    const response2 = await fetch(
+      `http://localhost:5000/thirtythree/eleven/${thirtythrees}`);
+    const data2 = await response2.json();
+    setDt(data2);
+};
+
+console.log(selectedthirtythree)
 
 
-// when a zone is selected to get the circle dropdown values
-
-    const handleZoneChange = async (event,value) => {
-        const selectedZones =  value.map((v) => v.value); // get an array of selected values
-        setSelectedZone(selectedZones)
-
-        const offices = value.map((v) => v.label); // get an array of selected labels
-        setOptionzone(offices.join(","));
-    
-
-        
-        setShowtable(false)
-
-        const response = await fetch(`http://localhost:5000/zone/zone/${selectedZones}`);
-        const data = await  response.json();
-        setCircle(data)
-        const response1 = await fetch(`http://localhost:5000/zone/circle/${selectedZones}`);
-        const data1 = await  response1.json();
-        setDivision(data1)
-        const response2 = await fetch(`http://localhost:5000/zone/division/${selectedZones}`);
-        const data2 = await  response2.json();
-        setSubdivision(data2)
-    };
-
-    console.log(selectedzone)
 
 
-// when a circle is selected to get the division dropdown values
+// when a Substation is selected to get the eleven dropdown values
 
-    const handleCircleChange = async (event,value) => {
-        const selectedCircles = value.map((v) => v.value); // get an array of selected values
-        setSelectedCircle(selectedCircles)
+    const handleSubstationChange = async (event,value) => {
+        let substations;
+        let Labelsubstation;
+        if (value.some((v) => v.value === "All")) {
+            substations = substation.filter((v) => v.nin_id !== "All").map((v) => v.sequence_id).join(",");
+            setSelectedSubstation(substations);
 
-        const offices = value.map((v) => v.label);
-        setOptioncircle(offices.join(","));
-       
+        Labelsubstation = substation.filter((v) => v.nin_id !== "All").map((v) => v.nin_id).join(",");
+        setOptionname({
+            ...optionname,
+            optionsubstation : Labelsubstation
+        });
+          }
+          else {
+          // otherwise, get an array of selected values and labels as before
 
-        
-        setShowtable(false)
+        substations = value.map((v) => v.value); // get an array of selected values
+        setSelectedSubstation(substations)
 
-        const response =await fetch(`http://localhost:5000/circle/circle/${selectedCircles}`);
+        Labelsubstation = value.map((v) => v.label);
+        setOptionname({
+            ...optionname,
+            optionsubstation : Labelsubstation.join(",")
+        });
+          }
+
+        setShowtable(false);
+        const response =await fetch(`http://localhost:5000/substation/substation/${substations}`);
         const data = await response.json();
-        setDivision(data)
-        const response1 =await fetch(`http://localhost:5000/circle/division/${selectedCircles}`);
+        setEleven(data)
+        const response1 =await fetch(`http://localhost:5000/substation/eleven/${substations}`);
         const data1 = await response1.json();
-        setSubdivision(data1)
+        setDt(data1)
     };
-    console.log(selectedcircle)
+    console.log(selectedsubstation)
+   
 
+ // when a eleven is selected to get the subeleven dropdown values
+     const handleElevenChange = async (event,value) => {
+        let elevens;
+        let Labeleleven;
+       
+        if (value.some((v) => v.value === "All")) {
+            elevens = eleven.filter((v) => v.nin_id !== "All").map((v) => v.sequence_id).join(",");
+            setSelectedEleven(elevens);
 
- // when a division is selected to get the subdivision dropdown values
-     const handleDivisionChange = async (event,value) => {
-        const selectedDivs = value.map((v) => v.value);
-        setSelectedDivision(selectedDivs)
+        Labeleleven = eleven.filter((v) => v.nin_id !== "All").map((v) => v.nin_id).join(",");
+        setOptionname({
+            ...optionname,
+            optioneleven : Labeleleven});
+          }
+          else {
+          // otherwise, get an array of selected values and labels as before
+        elevens = value.map((v) => v.value);
+        setSelectedEleven(elevens)
 
-        const offices = value.map((v) => v.label);
-        setOptiondivision(offices.join(","))
-      
+        Labeleleven = value.map((v) => v.label);
+        setOptionname({
+            ...optionname,
+            optioneleven : Labeleleven.join(", ")});
+          }
 
         setShowtable(false)
-        const response =await fetch(`http://localhost:5000/division/division/${selectedDivs}`);
+        const response =await fetch(`http://localhost:5000/eleven/eleven/${elevens}`);
             const data = await response.json();
-           setSubdivision(data)
+           setDt(data)
            
     };
-    console.log(selecteddivision)
-
+    console.log(eleven)
+    console.log(selectedeleven)
+   
 
 // when a subdivision is selected to get the section dropdown values
-const handleSubdivisionChange = async (event,value) => {
-    const selectedSubs = value.map((v) => v.value);
-    setSelectedSubDivision(selectedSubs)
-    
-    const offices = value.map((v) => v.label);
-    setOptionsubdivision(offices.join(",s"))
-       
+const handleDtChange = async (event,value) => {
+    let dts;
+    let Labeldt
+    if (value.some((v) => v.value === "All")) {
+        dts = dt.filter((v) => v.nin_id !== "All").map((v) => v.sequence_id).join(",");
+        setSelectedDt(dts);
 
+        Labeldt = dt.filter((v) => v.nin_id !== "All").map((v) => v.nin_id).join(",");
+        // setOptionsubdivision(Labelsub);
+        setOptionname({
+            ...optionname,
+            optionsdt : Labeldt});
+      }
+      else {
+      // otherwise, get an array of selected values and labels as before
+    dts = value.map((v) => v.value);
+    setSelectedDt(dts)
+    
+    Labeldt = value.map((v) => v.label);
+    // setOptionsubdivision(Labelsub.join(","))
+    setOptionname({
+        ...optionname,
+        optiondt : Labeldt.join(",")});
+       
+      }
     setShowtable(false)
 
-    // const response =await fetch(`http://localhost:5000/sub/${selectedSub}`);
-    //     const data = await response.json();
-    //    setSection(data)
-       
 };
-console.log(selectedsubdivision)
 
-// // when a subdivision is selected to get the section dropdown values
-// const handleSectionChange = async event => {
-//     const selectedSection = event.target.value;
-//     setSelectedSection(selectedSection)
-//     setRecentlyselected(selectedSection)
-//     setShowtable(false)
-// };
-
-
+console.log(selecteddt)
+console.log(optionname)
 
   return (
 
@@ -185,25 +258,36 @@ console.log(selectedsubdivision)
         multiple
       disablePortal
       id="combo-box-demo"
-      onChange={handleStateChange}
-      options={discom.map(option => ({value:option.sequence_id, label: option.office_id}))}
+      onChange={handleGssChange}
+      options={[
+        { value: "All", label: "ALL" },
+        ...gss.map((option) => ({
+          value: option.sequence_id,
+          label: option.nin_id,
+        })),
+      ]}
       sx={{ width: 200 }}
-      renderInput={(params) => <TextField {...params} label="Discom" />}
+      renderInput={(params) => <TextField {...params} label="GSS" />}
     />
     
 
 &nbsp;&nbsp;&nbsp;&nbsp;
 
 <Autocomplete
-    multiple
-      disablePortal
-      id="combo-box-demo"
-      onChange={handleZoneChange}
-      options={zone.map(option => ({value:option.sequence_id, label: option.office_id}))}
-      sx={{ width: 200 }}
-      renderInput={(params) => <TextField {...params} label="Zone" />}
-      
-    />
+  multiple
+  disablePortal
+  id="combo-box-demo"
+  onChange={handleThirtythreeChange}
+  options={[
+    { value: "All", label: "ALL" },
+    ...thirtythree.map((option) => ({
+      value: option.sequence_id,
+      label: option.nin_id,
+    })),
+  ]}
+  sx={{ width: 200 }}
+  renderInput={(params) => <TextField {...params} label="33KV Feeder" />}
+/>
 
 
  &nbsp;&nbsp;&nbsp;&nbsp;
@@ -212,10 +296,16 @@ console.log(selectedsubdivision)
       multiple
       disablePortal
       id="combo-box-demo"
-      onChange={handleCircleChange}
-      options={circle.map(option => ({value:option.sequence_id, label: option.office_id}))}
+      onChange={handleSubstationChange}
+      options={[
+        { value: "All", label: "ALL" },
+        ...substation.map((option) => ({
+          value: option.sequence_id,
+          label: option.nin_id,
+        })),
+      ]}
       sx={{ width: 200 }}
-      renderInput={(params) => <TextField {...params} label="Circle" />}
+      renderInput={(params) => <TextField {...params} label="Substation" />}
      
     />
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -224,10 +314,16 @@ console.log(selectedsubdivision)
       multiple
       disablePortal
       id="combo-box-demo"
-      onChange={handleDivisionChange}
-      options={division.map(option => ({value:option.sequence_id, label: option.office_id}))}
+      onChange={handleElevenChange}
+      options={[
+        { value: "All", label: "ALL" },
+        ...eleven.map((option) => ({
+          value: option.sequence_id,
+          label: option.nin_id,
+        })),
+      ]}
       sx={{ width: 200 }}
-      renderInput={(params) => <TextField {...params} label="Division" />}
+      renderInput={(params) => <TextField {...params} label="11KV Feeder" />}
  
     />
 
@@ -237,24 +333,21 @@ console.log(selectedsubdivision)
     multiple
       disablePortal
       id="combo-box-demo"
-      onChange={handleSubdivisionChange}
-      options={subdivision.map(option => ({value:option.sequence_id, label: option.office_id}))}
+      onChange={handleDtChange}
+      options={[
+        { value: "All", label: "ALL" },
+        ...dt.map((option) => ({
+          value: option.sequence_id,
+          label: option.nin_id,
+        })),
+      ]}
       sx={{ width: 200 }}
-      renderInput={(params) => <TextField {...params} label="SUB Division" />}
+      renderInput={(params) => <TextField {...params} label="DT" />}
 
     />
         
 &nbsp;&nbsp;&nbsp;&nbsp;
 
-        {/* <label htmlFor="section">Section:</label> 
-        <select  id ="section" name="section" value={selectedsection} onChange={handleSectionChange}>
-        <option value="" disabled={selectedsection !== ''}>Select an option</option>
-            {section.map(je_section =>(
-                <option key = {je_section.sequence_id} value={je_section.sequence_id}>
-                    {je_section.office_id}
-                </option>
-            ))}
-        </select>  */}
 
 </Box>
 
@@ -262,11 +355,10 @@ console.log(selectedsubdivision)
         <Button variant="contained"  type="submit" value="Fetch" onClick={(e) => setShowtable(true)}>FETCH</Button>
         <br/><br/>
        
-        {showtable && <DisplayData discom={optiondiscom} zone={optionzone} circle={optioncircle} division={optiondivision} subdivision={optionsubdivision} /> }
-    
+        {showtable && <DisplayData optionname={optionname} /> }
 
         </Box>
   )
 }
 
-export default Dropdown;
+export default NetDropdown;

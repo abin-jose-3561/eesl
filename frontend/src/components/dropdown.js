@@ -129,7 +129,7 @@ const handleZoneChange = async (event, value) => {
     //   setOptionzone(Labelzone.join(","));
     setOptionname({
         ...optionname,
-        optionzone : Labelzone.join(", ")});
+        optionzone : Labelzone.join(",")});
       }
 
     setShowtable(false);
@@ -221,7 +221,7 @@ console.log(selectedzone)
         // setOptiondivision(Labeldiv.join(","))
         setOptionname({
             ...optionname,
-            optiondivision : Labeldiv.join(", ")});
+            optiondivision : Labeldiv.join(",")});
           }
 
         setShowtable(false)
@@ -257,7 +257,7 @@ const handleSubdivisionChange = async (event,value) => {
     // setOptionsubdivision(Labelsub.join(","))
     setOptionname({
         ...optionname,
-        optionsubdivision : Labelsub.join(", ")});
+        optionsubdivision : Labelsub.join(",")});
        
       }
     setShowtable(false)

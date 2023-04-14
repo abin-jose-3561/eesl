@@ -2,10 +2,10 @@ import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-// import OrgHierarchy from './OrgHierarchy';
 
 import './App.css';
 import DropdownOptions from './components/dropdown';
+import NetDropdown from './components/netdropdown';
 
 
 export default function App() {
@@ -27,7 +27,7 @@ export default function App() {
         <Tab label="Net Hierarchy" />
       </Tabs>
       {value === 0 && <DropdownOptions />}
-      {value === 1 && "<NetHierarchy />"}
+      {value === 1 && <NetDropdown/>}
     </Box>
   );
 }
