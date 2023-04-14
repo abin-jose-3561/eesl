@@ -104,16 +104,18 @@ console.log(column,id)
 
     column === "circle"?
     (data = await pool.query(
-      `SELECT * FROM org_hier t1 WHERE t1.nin_type IN ('CIRCLE') AND t1.parent_nin IN (
-        SELECT t2.sequence_id FROM org_hier t2 WHERE t2.nin_type = 'ZONE' AND t2.sequence_id = ANY($1::text[]))`,
+      `SELECT * FROM org_hier t1 WHERE t1.nin_type IN ('DIVISION') AND t1.parent_nin IN (
+        SELECT t2.sequence_id FROM org_hier t2 WHERE t2.nin_type = 'CIRCLE' AND t2.parent_nin IN(
+          SELECT t3.sequence_id FROM org_hier t3 WHERE t3.nin_type = 'ZONE' AND t3.sequence_id = ANY($1::text[])))`,
       [id.split(',')])
     ) : null;
 
     column === "division"?
     (data = await pool.query(
-      `SELECT * FROM org_hier t1 WHERE t1.nin_type IN ('DIVISION') AND t1.parent_nin IN (
-        SELECT t2.sequence_id FROM org_hier t2 WHERE t2.nin_type = 'CIRCLE' AND t2.parent_nin IN(
-SELECT t3.sequence_id FROM org_hier t3 WHERE t3.nin_type = 'ZONE' AND t3.sequence_id = ANY($1::text[])))`,
+      `SELECT * FROM org_hier t1 WHERE t1.nin_type IN ('SUBDIVISION') AND t1.parent_nin IN (
+        SELECT t2.sequence_id FROM org_hier t2 WHERE t2.nin_type = 'DIVISION' AND t2.parent_nin IN(
+             SELECT t3.sequence_id FROM org_hier t3 WHERE t3.nin_type = 'CIRCLE' AND t3.parent_nin IN(
+                SELECT t4.sequence_id FROM org_hier t4 WHERE t4.nin_type = 'ZONE' AND t4.sequence_id = ANY($1::text[]))))`,
       [id.split(',')])
     ) : null;
 
@@ -139,8 +141,9 @@ app.get("/circle/:column/:id", async (req, res) => {
 
     column === "division"?
     (data = await pool.query(
-      `SELECT * FROM org_hier t1 WHERE t1.nin_type IN ('DIVISION') AND t1.parent_nin IN (
-        SELECT t2.sequence_id FROM org_hier t2 WHERE t2.nin_type = 'CIRCLE' AND t2.sequence_id = ANY($1::text[]))`,
+      `SELECT * FROM org_hier t1 WHERE t1.nin_type IN ('SUBDIVISION') AND t1.parent_nin IN (
+        SELECT t2.sequence_id FROM org_hier t2 WHERE t2.nin_type = 'DIVISION' AND t2.parent_nin IN(
+        SELECT t3.sequence_id FROM org_hier t3 WHERE t3.nin_type = 'CIRCLE' AND t3.sequence_id = ANY($1::text[]))`,
       [id.split(',')])
     ) : null;
 
@@ -163,21 +166,8 @@ app.get("/circle/:column/:id", async (req, res) => {
       res.status(500).send('Error fetching data from database');
     }
   });
-
-  // app.get("/sub/:id", async (req, res) => {
-    
-  //   const  { id } =req.params;
-  //   console.log(id)
-  //   try {
-  //     const {rows} = await pool.query( `select * from org_hier where parent_nin = $1`,[id]);
-  //     res.json(rows);
-  //   } catch (err) {
-  //     console.error(err.message);
-  //     res.status(500).send('Error fetching data from database');
-  //   }
-  // });
-
-
+  
+//To fetch
   app.get("/table/tabb", async (req, res) => {
     const { discom, zone, circle, division, subdivision } = req.query;
     console.log("op", discom, zone, circle, division, subdivision);
@@ -344,17 +334,20 @@ console.log(column,id)
     ) : null;
 
     column === "substation"?
-    (data = await pool.query(
-      `SELECT * FROM net_hier t1 WHERE t1.nin_type IN ('SUBSTATION') AND t1.parent_nin IN (
-        SELECT t2.sequence_id FROM net_hier t2 WHERE t2.nin_type = '33 KV FEEDER' AND t2.sequence_id = ANY($1::text[]))`,
+    (data = await pool.query(`
+    SELECT * FROM net_hier t1 WHERE t1.nin_type IN ('11 KV FEEDER') AND t1.parent_nin IN (
+      SELECT t2.sequence_id FROM net_hier t2 WHERE t2.nin_type = 'SUBSTATION' AND t2.parent_nin IN(
+        SELECT t3.sequence_id FROM net_hier t3 WHERE t3.nin_type = '33 KV FEEDER' AND t3.sequence_id = ANY($1::text[])))`
+      ,
       [id.split(',')])
     ) : null;
 
     column === "eleven"?
     (data = await pool.query(
-      `SELECT * FROM net_hier t1 WHERE t1.nin_type IN ('11 KV FEEDER') AND t1.parent_nin IN (
-        SELECT t2.sequence_id FROM net_hier t2 WHERE t2.nin_type = 'SUBSTATION' AND t2.parent_nin IN(
-          SELECT t3.sequence_id FROM net_hier t3 WHERE t3.nin_type = '33 KV FEEDER' AND t3.sequence_id = ANY($1::text[])))`,
+      `SELECT * FROM net_hier t1 WHERE t1.nin_type IN ('DT') AND t1.parent_nin IN (
+        SELECT t2.sequence_id FROM net_hier t2 WHERE t2.nin_type = '11 KV FEEDER' AND t2.parent_nin IN(
+             SELECT t3.sequence_id FROM net_hier t3 WHERE t3.nin_type = 'SUBSTATION' AND t3.parent_nin IN(
+                SELECT t4.sequence_id FROM net_hier t4 WHERE t4.nin_type = '33 KV FEEDER' AND t4.sequence_id = ANY($1::text[]))))`,
       [id.split(',')])
     ) : null;
 
@@ -378,8 +371,9 @@ app.get("/substation/:column/:id", async (req, res) => {
 
     column === "11 KV FEEDER"?
     (data = await pool.query(
-      `SELECT * FROM net_hier t1 WHERE t1.nin_type IN ('11 KV FEEDER') AND t1.parent_nin IN (
-        SELECT t2.sequence_id FROM net_hier t2 WHERE t2.nin_type = 'SUBSTATION' AND t2.sequence_id = ANY($1::text[]))`,
+      `SELECT * FROM net_hier t1 WHERE t1.nin_type IN ('DT') AND t1.parent_nin IN (
+          SELECT t2.sequence_id FROM net_hier t2 WHERE t2.nin_type = '11 KV FEEDER' AND t2.parent_nin IN(
+            SELECT t3.sequence_id FROM net_hier t3 WHERE t3.nin_type = 'SUBSTATION' AND t3.sequence_id = ANY($1::text[])))`,
       [id.split(',')])
     ) : null;
 

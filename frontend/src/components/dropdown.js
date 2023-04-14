@@ -5,26 +5,22 @@ import DisplayData from './table'
 import { Box, Button } from '@mui/material';
 
 const Dropdown = ()=> {
+
+    //For storing the data in an array when an option is selected
     const [discom,setDiscom] = useState([])
     const [zone,setZone] = useState([])
     const [circle,setCircle] = useState([])
     const [division,setDivision] = useState([])
     const [subdivision,setSubdivision] = useState([])
-    // const [section,setSection] = useState([])
-    
+
+//For storing the selected option's sequence ids 
     const [selecteddiscom,setSelectedDiscom] = useState(null)
     const [selectedzone,setSelectedZone] = useState(null)
     const [selectedcircle,setSelectedCircle] = useState(null)
     const [selecteddivision,setSelectedDivision] = useState(null)
     const [selectedsubdivision,setSelectedSubDivision] = useState(null)
-    // const [selectedsection,setSelectedSection] = useState('')
 
-//   const [optiondiscom, setOptiondiscom] = useState(null)
-//   const [optionzone, setOptionzone] = useState(null)
-//   const [optioncircle, setOptioncircle] = useState(null)
-//   const [optiondivision, setOptiondivision] = useState(null)
-//   const [optionsubdivision, setOptionsubdivision] = useState(null)
-
+// For storing the selected option names
   const [optionname, setOptionname] = useState({
     optiondiscom : '',
     optionzone : '',
@@ -70,7 +66,6 @@ const handleStateChange = async (event, value) => {
         setSelectedDiscom(Discoms);
 
         Labeldiscom = discom.filter((v) => v.office_id !== "All").map((v) => v.office_id).join(",");
-        // setOptiondiscom(Labeldiscom)
         setOptionname({
             ...optionname,
             optiondiscom : Labeldiscom
@@ -82,7 +77,6 @@ const handleStateChange = async (event, value) => {
     console.log(Discoms)
 
     Labeldiscom = value.map((v) => v.label); // get an array of selected labels
-    // setOptiondiscom(Labeldiscom.join(",")); // join the array with a comma and space separator
     setOptionname({
         ...optionname,
         optiondiscom : Labeldiscom.join(",")
@@ -115,18 +109,15 @@ const handleZoneChange = async (event, value) => {
         setSelectedZone(Zones);
 
         Labelzone = zone.filter((v) => v.office_id !== "All").map((v) => v.office_id).join(",");
-        // setOptionzone(Labelzone)
         setOptionname({
             ...optionname,
             optionzone : Labelzone});
       }
       else {
-      // otherwise, get an array of selected values and labels as before
       Zones = value.map((v) => v.value);
       setSelectedZone(Zones);
 
       Labelzone = value.map((v) => v.label);
-    //   setOptionzone(Labelzone.join(","));
     setOptionname({
         ...optionname,
         optionzone : Labelzone.join(",")});
@@ -164,7 +155,6 @@ console.log(selectedzone)
             setSelectedCircle(Circles);
 
         Labelcircle = circle.filter((v) => v.office_id !== "All").map((v) => v.office_id).join(",");
-        // setOptioncircle(Labelcircle);
         setOptionname({
             ...optionname,
             optioncircle : Labelcircle
@@ -177,7 +167,6 @@ console.log(selectedzone)
         setSelectedCircle(Circles)
 
         Labelcircle = value.map((v) => v.label);
-        // setOptioncircle(Labelcircle.join(","));
         setOptionname({
             ...optionname,
             optioncircle : Labelcircle.join(",")
@@ -205,7 +194,6 @@ console.log(selectedzone)
             setSelectedDivision(Divisions);
 
         Labeldiv = division.filter((v) => v.office_id !== "All").map((v) => v.office_id).join(",");
-        // setOptiondivision(Labeldiv);
         setOptionname({
             ...optionname,
             optiondivision : Labeldiv});
@@ -213,12 +201,10 @@ console.log(selectedzone)
         console.log("labeldiv",Labeldiv)
           }
           else {
-          // otherwise, get an array of selected values and labels as before
         Divisions = value.map((v) => v.value);
         setSelectedDivision(Divisions)
 
         Labeldiv = value.map((v) => v.label);
-        // setOptiondivision(Labeldiv.join(","))
         setOptionname({
             ...optionname,
             optiondivision : Labeldiv.join(",")});
@@ -243,18 +229,15 @@ const handleSubdivisionChange = async (event,value) => {
         setSelectedSubDivision(Subdivisions);
 
         Labelsub = subdivision.filter((v) => v.office_id !== "All").map((v) => v.office_id).join(",");
-        // setOptionsubdivision(Labelsub);
         setOptionname({
             ...optionname,
             optionsubdivision : Labelsub});
       }
       else {
-      // otherwise, get an array of selected values and labels as before
     Subdivisions = value.map((v) => v.value);
     setSelectedSubDivision(Subdivisions)
     
     Labelsub = value.map((v) => v.label);
-    // setOptionsubdivision(Labelsub.join(","))
     setOptionname({
         ...optionname,
         optionsubdivision : Labelsub.join(",")});
@@ -271,18 +254,18 @@ console.log(optionname)
 
 <Box>
     <Box align="center" display="flex" marginTop="20px" marginLeft="20px">
+
         <Autocomplete
         multiple
       disablePortal
       id="combo-box-demo"
       onChange={handleStateChange}
-      options={[
-        { value: "All", label: "ALL" },
-        ...discom.map((option) => ({
-          value: option.sequence_id,
-          label: option.office_id,
-        })),
-      ]}
+      options={[    ...(discom.length > 0 ? [{ value: "All", label: "ALL" }] : []),
+      ...discom.map((option) => ({
+        value: option.sequence_id,
+        label: option.office_id,
+      })),
+    ]}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Discom" />}
     />
@@ -296,7 +279,7 @@ console.log(optionname)
   id="combo-box-demo"
   onChange={handleZoneChange}
   options={[
-    { value: "All", label: "ALL" },
+    ...(zone.length > 0 ? [{ value: "All", label: "ALL" }] : []),
     ...zone.map((option) => ({
       value: option.sequence_id,
       label: option.office_id,
@@ -315,7 +298,7 @@ console.log(optionname)
       id="combo-box-demo"
       onChange={handleCircleChange}
       options={[
-        { value: "All", label: "ALL" },
+        ...(circle.length > 0 ? [{ value: "All", label: "ALL" }] : []),
         ...circle.map((option) => ({
           value: option.sequence_id,
           label: option.office_id,
@@ -333,7 +316,7 @@ console.log(optionname)
       id="combo-box-demo"
       onChange={handleDivisionChange}
       options={[
-        { value: "All", label: "ALL" },
+        ...(division.length > 0 ? [{ value: "All", label: "ALL" }] : []),
         ...division.map((option) => ({
           value: option.sequence_id,
           label: option.office_id,
@@ -352,7 +335,7 @@ console.log(optionname)
       id="combo-box-demo"
       onChange={handleSubdivisionChange}
       options={[
-        { value: "All", label: "ALL" },
+        ...(subdivision.length > 0 ? [{ value: "All", label: "ALL" }] : []),
         ...subdivision.map((option) => ({
           value: option.sequence_id,
           label: option.office_id,
@@ -363,17 +346,6 @@ console.log(optionname)
 
     />
         
-&nbsp;&nbsp;&nbsp;&nbsp;
-
-        {/* <label htmlFor="section">Section:</label> 
-        <select  id ="section" name="section" value={selectedsection} onChange={handleSectionChange}>
-        <option value="" disabled={selectedsection !== ''}>Select an option</option>
-            {section.map(je_section =>(
-                <option key = {je_section.sequence_id} value={je_section.sequence_id}>
-                    {je_section.office_id}
-                </option>
-            ))}
-        </select>  */}
 
 </Box>
 
@@ -381,7 +353,6 @@ console.log(optionname)
         <Button variant="contained"  type="submit" value="Fetch" onClick={(e) => setShowtable(true)}>FETCH</Button>
         <br/><br/>
        
-        {/* {showtable && <DisplayData discom={optiondiscom} zone={optionzone} circle={optioncircle} division={optiondivision} subdivision={optionsubdivision} /> } */}
         {showtable && <DisplayData optionname={optionname} /> }
 
         </Box>

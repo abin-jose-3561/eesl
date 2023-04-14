@@ -60,16 +60,6 @@ const DisplayData = ({optionname}) =>{
 
   const fetchProducts = async () => {
     
-  //   const response = await axios
-  //     .get(`http://localhost:5000/table/${discom}/${zone}/${circle}/${division}/${subdivision}`)
-  //     .catch((err) => console.log(err));
-
-  //   if (response) {
-  //     const products = response.data;
-  //     console.log("Products: ", products);
-  //     setProducts(products);
-  //   }
-  // };
     const queryparams=`?discom=${optionname.optiondiscom}&zone=${optionname.optionzone}&circle=${optionname.optioncircle}&division=${optionname.optiondivision}&subdivision=${optionname.optionsubdivision}`;
     const response = await axios
       .get(`http://localhost:5000/table/tabb${queryparams}`)

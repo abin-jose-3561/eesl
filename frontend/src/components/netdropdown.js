@@ -19,7 +19,7 @@ const NetDropdown = ()=> {
 
 
   const [optionname, setOptionname] = useState({
-    optionggs : '',
+    optiongss : '',
     optionthirtythree : '',
     optionsubstation : '',
     optioneleven : '',
@@ -111,7 +111,6 @@ const handleThirtythreeChange = async (event, value) => {
             optionthirtythree : Labelthirtythree});
       }
       else {
-      // otherwise, get an array of selected values and labels as before
       thirtythrees = value.map((v) => v.value);
       setSelectedThirtythree(thirtythrees);
 
@@ -159,7 +158,6 @@ console.log(selectedthirtythree)
         });
           }
           else {
-          // otherwise, get an array of selected values and labels as before
 
         substations = value.map((v) => v.value); // get an array of selected values
         setSelectedSubstation(substations)
@@ -197,7 +195,6 @@ console.log(selectedthirtythree)
             optioneleven : Labeleleven});
           }
           else {
-          // otherwise, get an array of selected values and labels as before
         elevens = value.map((v) => v.value);
         setSelectedEleven(elevens)
 
@@ -226,18 +223,15 @@ const handleDtChange = async (event,value) => {
         setSelectedDt(dts);
 
         Labeldt = dt.filter((v) => v.nin_id !== "All").map((v) => v.nin_id).join(",");
-        // setOptionsubdivision(Labelsub);
         setOptionname({
             ...optionname,
             optionsdt : Labeldt});
       }
       else {
-      // otherwise, get an array of selected values and labels as before
     dts = value.map((v) => v.value);
     setSelectedDt(dts)
     
     Labeldt = value.map((v) => v.label);
-    // setOptionsubdivision(Labelsub.join(","))
     setOptionname({
         ...optionname,
         optiondt : Labeldt.join(",")});
@@ -260,7 +254,7 @@ console.log(optionname)
       id="combo-box-demo"
       onChange={handleGssChange}
       options={[
-        { value: "All", label: "ALL" },
+        ...(gss.length > 0 ? [{ value: "All", label: "ALL" }] : []),
         ...gss.map((option) => ({
           value: option.sequence_id,
           label: option.nin_id,
@@ -279,7 +273,7 @@ console.log(optionname)
   id="combo-box-demo"
   onChange={handleThirtythreeChange}
   options={[
-    { value: "All", label: "ALL" },
+    ...(thirtythree.length > 0 ? [{ value: "All", label: "ALL" }] : []),
     ...thirtythree.map((option) => ({
       value: option.sequence_id,
       label: option.nin_id,
@@ -298,7 +292,7 @@ console.log(optionname)
       id="combo-box-demo"
       onChange={handleSubstationChange}
       options={[
-        { value: "All", label: "ALL" },
+        ...(substation.length > 0 ? [{ value: "All", label: "ALL" }] : []),
         ...substation.map((option) => ({
           value: option.sequence_id,
           label: option.nin_id,
@@ -316,7 +310,7 @@ console.log(optionname)
       id="combo-box-demo"
       onChange={handleElevenChange}
       options={[
-        { value: "All", label: "ALL" },
+        ...(eleven.length > 0 ? [{ value: "All", label: "ALL" }] : []),
         ...eleven.map((option) => ({
           value: option.sequence_id,
           label: option.nin_id,
@@ -335,7 +329,7 @@ console.log(optionname)
       id="combo-box-demo"
       onChange={handleDtChange}
       options={[
-        { value: "All", label: "ALL" },
+        ...(dt.length > 0 ? [{ value: "All", label: "ALL" }] : []),
         ...dt.map((option) => ({
           value: option.sequence_id,
           label: option.nin_id,
