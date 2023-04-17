@@ -82,6 +82,26 @@ const handleStateChange = async (event, value) => {
         optiondiscom : Labeldiscom.join(",")
     });
       }
+       // remove the deselected option from Labeldiscom and selectedDiscom arrays
+  if (Labeldiscom.length > 0 && Discoms.length > 0) {
+    const deselectedOption = discom.find(
+      (option) => !value.some((v) => v.value === option.value)
+    );
+    if (deselectedOption) {
+      Labeldiscom = Labeldiscom.filter(
+        (label) => label !== deselectedOption.label
+      );
+     Discoms = Discoms.filter(
+        (discom) => discom !== deselectedOption.value
+      );
+      setOptionname({
+        ...optionname,
+        optiondiscom: Labeldiscom.join(","),
+      });
+      setSelectedDiscom(Discoms);
+    }
+  }
+
     setShowtable(false);
     const response = await fetch(`http://localhost:5000/discom/discom/${Discoms}`);
     const data = await  response.json();
@@ -97,7 +117,7 @@ const handleStateChange = async (event, value) => {
     setSubdivision(data3);
   };
 
-    console.log(selecteddiscom)
+    console.log("discom",selecteddiscom)
   
 
 // when a zone is selected to get the circle dropdown values
@@ -268,6 +288,7 @@ console.log(optionname)
     ]}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Discom" />}
+      isOptionEqualToValue={(option, value) => option.value === value.value}
     />
     
 
@@ -287,6 +308,7 @@ console.log(optionname)
   ]}
   sx={{ width: 200 }}
   renderInput={(params) => <TextField {...params} label="Zone" />}
+  isOptionEqualToValue={(option, value) => option.value === value.value}
 />
 
 
@@ -306,6 +328,7 @@ console.log(optionname)
       ]}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Circle" />}
+      isOptionEqualToValue={(option, value) => option.value === value.value}
      
     />
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -324,6 +347,7 @@ console.log(optionname)
       ]}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Division" />}
+      isOptionEqualToValue={(option, value) => option.value === value.value}
  
     />
 
@@ -343,6 +367,7 @@ console.log(optionname)
       ]}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="SUB Division" />}
+      isOptionEqualToValue={(option, value) => option.value === value.value}
 
     />
         
