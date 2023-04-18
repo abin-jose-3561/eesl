@@ -73,7 +73,7 @@ const handleStateChange = async (event, value) => {
       } 
       else{
     Discoms = value.map((v) => v.value); // get an array of selected values
-    setSelectedDiscom(Discoms);
+    setSelectedDiscom(Discoms.join(","));
     console.log(Discoms)
 
     Labeldiscom = value.map((v) => v.label); // get an array of selected labels
@@ -82,26 +82,7 @@ const handleStateChange = async (event, value) => {
         optiondiscom : Labeldiscom.join(",")
     });
       }
-       // remove the deselected option from Labeldiscom and selectedDiscom arrays
-  if (Labeldiscom.length > 0 && Discoms.length > 0) {
-    const deselectedOption = discom.find(
-      (option) => !value.some((v) => v.value === option.value)
-    );
-    if (deselectedOption) {
-      Labeldiscom = Labeldiscom.filter(
-        (label) => label !== deselectedOption.label
-      );
-     Discoms = Discoms.filter(
-        (discom) => discom !== deselectedOption.value
-      );
-      setOptionname({
-        ...optionname,
-        optiondiscom: Labeldiscom.join(","),
-      });
-      setSelectedDiscom(Discoms);
-    }
-  }
-
+    
     setShowtable(false);
     const response = await fetch(`http://localhost:5000/discom/discom/${Discoms}`);
     const data = await  response.json();
@@ -117,7 +98,7 @@ const handleStateChange = async (event, value) => {
     setSubdivision(data3);
   };
 
-    console.log("discom",selecteddiscom)
+    console.log("Selected Discom",selecteddiscom)
   
 
 // when a zone is selected to get the circle dropdown values
@@ -135,7 +116,7 @@ const handleZoneChange = async (event, value) => {
       }
       else {
       Zones = value.map((v) => v.value);
-      setSelectedZone(Zones);
+      setSelectedZone(Zones.join(","));
 
       Labelzone = value.map((v) => v.label);
     setOptionname({
@@ -160,7 +141,7 @@ const handleZoneChange = async (event, value) => {
     setSubdivision(data2);
 };
 
-console.log(selectedzone)
+console.log("Selected Zone", selectedzone)
 
 
 
@@ -184,7 +165,7 @@ console.log(selectedzone)
           // otherwise, get an array of selected values and labels as before
 
         Circles = value.map((v) => v.value); // get an array of selected values
-        setSelectedCircle(Circles)
+        setSelectedCircle(Circles.join(","))
 
         Labelcircle = value.map((v) => v.label);
         setOptionname({
@@ -201,7 +182,7 @@ console.log(selectedzone)
         const data1 = await response1.json();
         setSubdivision(data1)
     };
-    console.log(selectedcircle)
+    console.log("Selected Circle",selectedcircle)
    
 
  // when a division is selected to get the subdivision dropdown values
@@ -222,7 +203,7 @@ console.log(selectedzone)
           }
           else {
         Divisions = value.map((v) => v.value);
-        setSelectedDivision(Divisions)
+        setSelectedDivision(Divisions.join(","))
 
         Labeldiv = value.map((v) => v.label);
         setOptionname({
@@ -236,8 +217,7 @@ console.log(selectedzone)
            setSubdivision(data)
            
     };
-    console.log(division)
-    console.log(selecteddivision)
+    console.log("Selected Division",selecteddivision)
    
 
 // when a subdivision is selected to get the section dropdown values
@@ -255,7 +235,7 @@ const handleSubdivisionChange = async (event,value) => {
       }
       else {
     Subdivisions = value.map((v) => v.value);
-    setSelectedSubDivision(Subdivisions)
+    setSelectedSubDivision(Subdivisions.join(","))
     
     Labelsub = value.map((v) => v.label);
     setOptionname({
@@ -267,8 +247,8 @@ const handleSubdivisionChange = async (event,value) => {
 
 };
 
-console.log(selectedsubdivision)
-console.log(optionname)
+console.log("Selected Subdivision",selectedsubdivision)
+console.log("Selected Option Names",optionname)
 
   return (
 
