@@ -3,6 +3,11 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import DisplayData from './table'
 import { Box, Button } from '@mui/material';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const Dropdown = ()=> {
 
@@ -12,6 +17,7 @@ const Dropdown = ()=> {
     const [circle,setCircle] = useState([])
     const [division,setDivision] = useState([])
     const [subdivision,setSubdivision] = useState([])
+    // const [lastread, setLastread]= useState([])
 
 //For storing the selected option's sequence ids 
     const [selecteddiscom,setSelectedDiscom] = useState(null)
@@ -19,6 +25,7 @@ const Dropdown = ()=> {
     const [selectedcircle,setSelectedCircle] = useState(null)
     const [selecteddivision,setSelectedDivision] = useState(null)
     const [selectedsubdivision,setSelectedSubDivision] = useState(null)
+    // const [selectedlast,setSelectedLast] = useState(null)
 
 // For storing the selected option names
   const [optionname, setOptionname] = useState({
@@ -84,6 +91,8 @@ const handleStateChange = async (event, value) => {
       }
     
     setShowtable(false);
+
+    
     const response = await fetch(`http://localhost:5000/discom/discom/${Discoms}`);
     const data = await  response.json();
     setZone(data);
@@ -124,25 +133,35 @@ const handleZoneChange = async (event, value) => {
         optionzone : Labelzone.join(",")});
       }
 
+      if(selecteddiscom === null){
+
+        const response =await fetch("http://localhost:5000/discom");
+        const data = await response.json();
+        setDiscom(data)
+      }
+      
+
     setShowtable(false);
 
-    const response = await fetch(
-      `http://localhost:5000/zone/zone/${Zones}` );
+    const responsedis = await fetch(`http://localhost:5000/zone/discom/${Zones}` );
+    const datadis = await responsedis.json();
+    setDiscom(datadis);
+
+    const response = await fetch(`http://localhost:5000/zone/zone/${Zones}` );
     const data = await response.json();
     setCircle(data);
-    const response1 = await fetch(
-      `http://localhost:5000/zone/circle/${Zones}`);
+
+    const response1 = await fetch(`http://localhost:5000/zone/circle/${Zones}`);
     const data1 = await response1.json();
     setDivision(data1);
 
-    const response2 = await fetch(
-      `http://localhost:5000/zone/division/${Zones}`);
+    const response2 = await fetch(`http://localhost:5000/zone/division/${Zones}`);
     const data2 = await response2.json();
     setSubdivision(data2);
 };
 
 console.log("Selected Zone", selectedzone)
-
+console.log(discom)
 
 
 
@@ -251,8 +270,17 @@ console.log("Selected Subdivision",selectedsubdivision)
 console.log("Selected Option Names",optionname)
 
   return (
+    <> 
+<Accordion>
+<AccordionSummary
+//expandIcon={<ExpandMoreIcon />
+ aria-controls="panel1a-content"
+ id="panel1a-header"
+>
+<Typography>Organization Hierarchy Filters</Typography>
+ </AccordionSummary>
+ <AccordionDetails>
 
-<Box>
     <Box align="center" display="flex" marginTop="20px" marginLeft="20px">
 
         <Autocomplete
@@ -272,7 +300,7 @@ console.log("Selected Option Names",optionname)
     />
     
 
-&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 <Autocomplete
   multiple
@@ -353,6 +381,9 @@ console.log("Selected Option Names",optionname)
         
 
 </Box>
+</AccordionDetails>
+
+</Accordion>
 
         <br/><br/>
         <Button variant="contained"  type="submit" value="Fetch" onClick={(e) => setShowtable(true)}>FETCH</Button>
@@ -360,7 +391,7 @@ console.log("Selected Option Names",optionname)
        
         {showtable && <DisplayData optionname={optionname} /> }
 
-        </Box>
+        </>
   )
 }
 

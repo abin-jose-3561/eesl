@@ -2,7 +2,7 @@ import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-
+import logo from './white.png';
 import './App.css';
 import DropdownOptions from './components/dropdown';
 import NetDropdown from './components/netdropdown';
@@ -15,7 +15,15 @@ export default function App() {
   };
 
   return (
+
+  
     <Box sx={{ width: '100%' }} align="center">
+       
+       <div className="starting-box">
+
+<img src={ logo } alt="logo" height={45} />
+
+</div>
       <Tabs
         value={value}
         onChange={handleChange}

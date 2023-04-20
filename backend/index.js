@@ -102,6 +102,14 @@ console.log(column,id)
       [id.split(',')])
     ) : null;
 
+    column === "discom"?
+    (data = await pool.query(
+    `SELECT * FROM org_hier t2 WHERE t2.nin_type = 'DISCOM' AND t2.sequence_id IN(
+      SELECT t3.parent_nin FROM org_hier t3 WHERE t3.nin_type = 'ZONE' AND t3.sequence_id =  ANY($1::text[]))`,
+      [id.split(',')])
+    ) : null;
+
+
     column === "circle"?
     (data = await pool.query(
       `SELECT * FROM org_hier t1 WHERE t1.nin_type IN ('DIVISION') AND t1.parent_nin IN (
