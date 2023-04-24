@@ -36,11 +36,18 @@ app.get("/:column", async (req, res) => {
       ? (data = await pool.query(
           `select * from org_hier where nin_type ='SUBDIVISION'`,))
       : null;
+
+  column === "lastread"
+      ? (data = await pool.query(
+          `select distinct lastread_status, diff from tabledata`,))
+      : null;
+
   res.json(data.rows);
     } catch (error) {
     console.error(error.message);
   }
 });
+
 
 //To set all dropdown boxes when discom is changed
   app.get("/discom/:column/:id", async (req, res) => {
@@ -96,19 +103,18 @@ app.get("/zone/:column/:id", async (req, res) => {
   const  { column, id } =req.params;
 console.log(column,id)
 
-  column === "zone"?
-    (data = await pool.query(
-    `SELECT * FROM org_hier WHERE parent_nin = ANY($1::text[])`,
-      [id.split(',')])
-    ) : null;
-
-    column === "discom"?
+column === "discom"?
     (data = await pool.query(
     `SELECT * FROM org_hier t2 WHERE t2.nin_type = 'DISCOM' AND t2.sequence_id IN(
       SELECT t3.parent_nin FROM org_hier t3 WHERE t3.nin_type = 'ZONE' AND t3.sequence_id =  ANY($1::text[]))`,
       [id.split(',')])
     ) : null;
 
+  column === "zone"?
+    (data = await pool.query(
+    `SELECT * FROM org_hier WHERE parent_nin = ANY($1::text[])`,
+      [id.split(',')])
+    ) : null;
 
     column === "circle"?
     (data = await pool.query(
@@ -140,7 +146,21 @@ app.get("/circle/:column/:id", async (req, res) => {
   try {
   const  { column, id } =req.params;
 
-  
+  column === "discom"?
+  (data = await pool.query(
+    `SELECT * FROM org_hier t1 WHERE t1.nin_type = 'DISCOM' AND t1.sequence_id IN(
+      SELECT t2.parent_nin FROM org_hier t2 WHERE t2.nin_type = 'ZONE' AND t2.sequence_id IN(
+        SELECT t3.parent_nin FROM org_hier t3 WHERE t3.nin_type = 'CIRCLE' AND t3.sequence_id = ANY($1::text[])))`,
+    [id.split(',')])
+  ) : null;
+
+  column === "zone"?
+    (data = await pool.query(
+      `SELECT * FROM org_hier t2 WHERE t2.nin_type = 'ZONE' AND t2.sequence_id IN(
+        SELECT t3.parent_nin FROM org_hier t3 WHERE t3.nin_type = 'CIRCLE' AND t3.sequence_id =  ANY($1::text[]))`,
+      [id.split(',')])
+    ) : null;
+
   column === "circle"?
     (data = await pool.query(
     `SELECT * FROM org_hier WHERE parent_nin = ANY($1::text[])`,
@@ -151,7 +171,7 @@ app.get("/circle/:column/:id", async (req, res) => {
     (data = await pool.query(
       `SELECT * FROM org_hier t1 WHERE t1.nin_type IN ('SUBDIVISION') AND t1.parent_nin IN (
         SELECT t2.sequence_id FROM org_hier t2 WHERE t2.nin_type = 'DIVISION' AND t2.parent_nin IN(
-        SELECT t3.sequence_id FROM org_hier t3 WHERE t3.nin_type = 'CIRCLE' AND t3.sequence_id = ANY($1::text[]))`,
+        SELECT t3.sequence_id FROM org_hier t3 WHERE t3.nin_type = 'CIRCLE' AND t3.sequence_id = ANY($1::text[])))`,
       [id.split(',')])
     ) : null;
 
@@ -163,25 +183,98 @@ app.get("/circle/:column/:id", async (req, res) => {
 });
 
 
-  app.get("/division/division/:id", async (req, res) => {
-    
-    const  { id } =req.params;
+  app.get("/division/:column/:id", async (req, res) => {
     try {
-      const {rows} = await pool.query(`SELECT * FROM org_hier WHERE parent_nin = ANY($1::text[])`,[id.split(',')]);
-      res.json(rows);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Error fetching data from database');
-    }
-  });
+    const  {column , id } =req.params;
+
+    column === "discom"?
+  (data = await pool.query(
+    `SELECT * FROM org_hier t1 WHERE t1.nin_type = 'DISCOM' AND t1.sequence_id IN(
+      SELECT t2.parent_nin FROM org_hier t2 WHERE t2.nin_type = 'ZONE' AND t2.sequence_id IN(
+        SELECT t3.parent_nin FROM org_hier t3 WHERE t3.nin_type = 'CIRCLE' AND t3.sequence_id IN(
+          SELECT t4.parent_nin FROM org_hier t4 WHERE t4.nin_type = 'DIVISION' AND t4.sequence_id = ANY($1::text[]))))`,
+    [id.split(',')])
+  ) : null;
+
+  column === "zone"?
+    (data = await pool.query(
+      `SELECT * FROM org_hier t1 WHERE t1.nin_type = 'ZONE' AND t1.sequence_id IN(
+        SELECT t2.parent_nin FROM org_hier t2 WHERE t2.nin_type = 'CIRCLE' AND t2.sequence_id IN(
+          SELECT t3.parent_nin FROM org_hier t3 WHERE t3.nin_type = 'DIVISION' AND t3.sequence_id = ANY($1::text[])))`,
+      [id.split(',')])
+    ) : null;
+
+  column === "circle"?
+    (data = await pool.query(
+    `SELECT * FROM org_hier t2 WHERE t2.nin_type = 'CIRCLE' AND t2.sequence_id IN(
+      SELECT t3.parent_nin FROM org_hier t3 WHERE t3.nin_type = 'DIVISION' AND t3.sequence_id =  ANY($1::text[]))`,
+      [id.split(',')])
+    ) : null;
+
+    column === "division"?
+    (data = await pool.query(
+      `SELECT * FROM org_hier WHERE parent_nin = ANY($1::text[])`,
+      [id.split(',')])
+    ) : null;
+   
+    res.json(data.rows);
+  } catch (error) {
+  console.error(error.message);
+}
+});
+
+
+app.get("/subdivision/:column/:id", async (req, res) => {
+  try {
+  const  {column , id } =req.params;
+
+  column === "discom"?
+(data = await pool.query(
+  `SELECT * FROM org_hier t1 WHERE t1.nin_type = 'DISCOM' AND t1.sequence_id IN(
+    SELECT t2.parent_nin FROM org_hier t2 WHERE t2.nin_type = 'ZONE' AND t2.sequence_id IN(
+      SELECT t3.parent_nin FROM org_hier t3 WHERE t3.nin_type = 'CIRCLE' AND t3.sequence_id IN(
+        SELECT t4.parent_nin FROM org_hier t4 WHERE t4.nin_type = 'DIVISION' AND t4.sequence_id IN(
+        SELECT t5.parent_nin FROM org_hier t5 WHERE t5.nin_type = 'SUBDIVISION' AND t5.sequence_id = ANY($1::text[])))))`,
+  [id.split(',')])
+) : null;
+
+column === "zone"?
+  (data = await pool.query(
+    `SELECT * FROM org_hier t1 WHERE t1.nin_type = 'ZONE' AND t1.sequence_id IN(
+      SELECT t2.parent_nin FROM org_hier t2 WHERE t2.nin_type = 'CIRCLE' AND t2.sequence_id IN(
+        SELECT t3.parent_nin FROM org_hier t3 WHERE t3.nin_type = 'DIVISION' AND t3.sequence_id IN(
+          SELECT t4.parent_nin FROM org_hier t4 WHERE t4.nin_type = 'SUBDIVISION' AND t4.sequence_id = ANY($1::text[]))))`,
+    [id.split(',')])
+  ) : null;
+
+column === "circle"?
+  (data = await pool.query(
+  `SELECT * FROM org_hier t2 WHERE t2.nin_type = 'CIRCLE' AND t2.sequence_id IN(
+    SELECT t2.parent_nin FROM org_hier t2 WHERE t2.nin_type = 'DIVISION' AND t2.sequence_id IN(
+    SELECT t3.parent_nin FROM org_hier t3 WHERE t3.nin_type = 'SUBDIVISION' AND t3.sequence_id =  ANY($1::text[])))`,
+    [id.split(',')])
+  ) : null;
+
+  column === "division"?
+  (data = await pool.query(
+    `SELECT * FROM org_hier t2 WHERE t2.nin_type = 'DIVISION' AND t2.sequence_id IN(
+      SELECT t3.parent_nin FROM org_hier t3 WHERE t3.nin_type = 'SUBDIVISION' AND t3.sequence_id =  ANY($1::text[]))`,
+    [id.split(',')])
+  ) : null;
+ 
+  res.json(data.rows);
+} catch (error) {
+console.error(error.message);
+}
+});
   
 //To fetch
   app.get("/table/tabb", async (req, res) => {
-    const { discom, zone, circle, division, subdivision } = req.query;
-    console.log("op", discom, zone, circle, division, subdivision);
+    const { discom, zone, circle, division, subdivision, lastread } = req.query;
+    console.log("op", discom, zone, circle, division, subdivision,lastread);
     let query = "SELECT * FROM tabledata WHERE 1=1 ";
     // let params = [];
-    console.log(typeof discom, zone, circle, division, subdivision);
+    console.log(typeof(discom), zone, circle, division, subdivision);
   
     if (discom) {
       const discomArray = discom.split(",");
@@ -228,6 +321,16 @@ app.get("/circle/:column/:id", async (req, res) => {
       const subdivisionArray = subdivision.split(",");
       if (subdivisionArray.length > 0) {
         query += `AND subdivision IN (${subdivisionArray
+          .map((d) => `'${d.trim()}'`)
+          .join(",")}) `;
+        // params.push(...subdivisionArray);
+      }
+    }
+
+    if (lastread) {
+      const lastreadArray = lastread.split(",");
+      if (lastreadArray.length > 0) {
+        query += `AND lastread_status IN (${lastreadArray
           .map((d) => `'${d.trim()}'`)
           .join(",")}) `;
         // params.push(...subdivisionArray);

@@ -17,15 +17,15 @@ const Dropdown = ()=> {
     const [circle,setCircle] = useState([])
     const [division,setDivision] = useState([])
     const [subdivision,setSubdivision] = useState([])
-    // const [lastread, setLastread]= useState([])
+    const [lastread, setLastread]= useState([])
 
 //For storing the selected option's sequence ids 
-    const [selecteddiscom,setSelectedDiscom] = useState(null)
-    const [selectedzone,setSelectedZone] = useState(null)
-    const [selectedcircle,setSelectedCircle] = useState(null)
-    const [selecteddivision,setSelectedDivision] = useState(null)
-    const [selectedsubdivision,setSelectedSubDivision] = useState(null)
-    // const [selectedlast,setSelectedLast] = useState(null)
+    const [selecteddiscom,setSelectedDiscom] = useState('')
+    const [selectedzone,setSelectedZone] = useState('')
+    const [selectedcircle,setSelectedCircle] = useState('')
+    const [selecteddivision,setSelectedDivision] = useState('')
+    const [selectedsubdivision,setSelectedSubDivision] = useState('')
+    const [selectedlast,setSelectedLast] = useState('')
 
 // For storing the selected option names
   const [optionname, setOptionname] = useState({
@@ -33,7 +33,8 @@ const Dropdown = ()=> {
     optionzone : '',
     optioncircle : '',
     optiondivision : '',
-    optionsubdivision : ''
+    optionsubdivision : '',
+    optionlastread : ''
   })
 
   const[showtable,setShowtable] = useState(false)
@@ -41,29 +42,36 @@ const Dropdown = ()=> {
 
 
 //to get the values of discom
+const fetchStates =async () =>{
+  const response =await fetch("http://localhost:5000/discom");
+  const data = await response.json();
+  setDiscom(data)
+  const response1 =await fetch("http://localhost:5000/zone");
+  const data1 = await response1.json();
+  setZone(data1)
+  const response2 =await fetch("http://localhost:5000/circle");
+  const data2 = await response2.json();
+  setCircle(data2)
+  const response3 =await fetch("http://localhost:5000/division");
+  const data3 = await response3.json();
+  setDivision(data3)
+  const response4 =await fetch("http://localhost:5000/subdivision");
+  const data4 = await response4.json();
+  setSubdivision(data4)
+
+  const response5 =await fetch("http://localhost:5000/lastread");
+  const data5 = await response5.json();
+  setLastread(data5)
+
+};
     useEffect(()=>{
-        const fetchStates =async () =>{
-            const response =await fetch("http://localhost:5000/discom");
-            const data = await response.json();
-            setDiscom(data)
-            const response1 =await fetch("http://localhost:5000/zone");
-            const data1 = await response1.json();
-            setZone(data1)
-            const response2 =await fetch("http://localhost:5000/circle");
-            const data2 = await response2.json();
-            setCircle(data2)
-            const response3 =await fetch("http://localhost:5000/division");
-            const data3 = await response3.json();
-            setDivision(data3)
-            const response4 =await fetch("http://localhost:5000/subdivision");
-            const data4 = await response4.json();
-            setSubdivision(data4)
-
-        };
+      if(selecteddiscom==='' && selectedzone==='' && selectedcircle==='' && selecteddivision==='' && selectedsubdivision===''){
         fetchStates();
-    },[]);
+      }
 
-  
+    },[selecteddiscom,selectedzone,selectedcircle,selecteddivision,selectedsubdivision]);
+
+
 // when a discom is selected to get the zone dropdown values
 const handleStateChange = async (event, value) => {
     let Discoms;
@@ -81,7 +89,6 @@ const handleStateChange = async (event, value) => {
       else{
     Discoms = value.map((v) => v.value); // get an array of selected values
     setSelectedDiscom(Discoms.join(","));
-    console.log(Discoms)
 
     Labeldiscom = value.map((v) => v.label); // get an array of selected labels
     setOptionname({
@@ -131,13 +138,6 @@ const handleZoneChange = async (event, value) => {
     setOptionname({
         ...optionname,
         optionzone : Labelzone.join(",")});
-      }
-
-      if(selecteddiscom === null){
-
-        const response =await fetch("http://localhost:5000/discom");
-        const data = await response.json();
-        setDiscom(data)
       }
       
 
@@ -194,6 +194,14 @@ console.log(discom)
           }
 
         setShowtable(false);
+
+        const responsed =await fetch(`http://localhost:5000/circle/discom/${Circles}`);
+        const datad = await responsed.json();
+        setDiscom(datad)
+
+        const responsez =await fetch(`http://localhost:5000/circle/zone/${Circles}`);
+        const dataz = await responsez.json();
+        setZone(dataz)
         const response =await fetch(`http://localhost:5000/circle/circle/${Circles}`);
         const data = await response.json();
         setDivision(data)
@@ -232,8 +240,17 @@ console.log(discom)
 
         setShowtable(false)
         const response =await fetch(`http://localhost:5000/division/division/${Divisions}`);
-            const data = await response.json();
-           setSubdivision(data)
+        const data = await response.json();
+        setSubdivision(data)
+        const responsed =await fetch(`http://localhost:5000/division/discom/${Divisions}`);
+        const datad = await responsed.json();
+        setDiscom(datad)
+        const responsez =await fetch(`http://localhost:5000/division/zone/${Divisions}`);
+        const dataz = await responsez.json();
+        setZone(dataz)
+        const responsec =await fetch(`http://localhost:5000/division/circle/${Divisions}`);
+        const datac = await responsec.json();
+        setCircle(datac)
            
     };
     console.log("Selected Division",selecteddivision)
@@ -263,8 +280,51 @@ const handleSubdivisionChange = async (event,value) => {
        
       }
     setShowtable(false)
+  
+    const responsed =await fetch(`http://localhost:5000/subdivision/discom/${Subdivisions}`);
+    const datad = await responsed.json();
+    setDiscom(datad)
+    const responsez =await fetch(`http://localhost:5000/subdivision/zone/${Subdivisions}`);
+    const dataz = await responsez.json();
+    setZone(dataz)
+    const responsec =await fetch(`http://localhost:5000/subdivision/circle/${Subdivisions}`);
+    const datac = await responsec.json();
+    setCircle(datac)
+    const responsediv =await fetch(`http://localhost:5000/subdivision/division/${Subdivisions}`);
+    const datadiv = await responsediv.json();
+    setDivision(datadiv)
 
 };
+
+
+// when a lasst read is selected to get the section dropdown values
+const handleLastreadChange = async (event,value) => {
+  let lastreadids;
+  let Labellast
+  if (value.some((v) => v.value === "All")) {
+      lastreadids = lastread.filter((v) => v.lastread_status!== "All").map((v) => v.diff).join(",");
+      setSelectedLast(lastreadids);
+
+      Labellast = lastread.filter((v) => v.lastread_status !== "All").map((v) => v.lastread_status).join(",");
+      setOptionname({
+          ...optionname,
+          optionlastread : Labellast});
+    }
+    else {
+  lastreadids = value.map((v) => v.value);
+  setSelectedLast(lastreadids.join(","))
+  
+  Labellast = value.map((v) => v.label);
+  setOptionname({
+      ...optionname,
+      optionlastread : Labellast.join(",")});
+     
+    }
+  setShowtable(false)
+
+};
+console.log(lastread)
+console.log("selected lastread",selectedlast)
 
 console.log("Selected Subdivision",selectedsubdivision)
 console.log("Selected Option Names",optionname)
@@ -300,7 +360,7 @@ console.log("Selected Option Names",optionname)
     />
     
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;
 
 <Autocomplete
   multiple
@@ -374,11 +434,28 @@ console.log("Selected Option Names",optionname)
         })),
       ]}
       sx={{ width: 200 }}
-      renderInput={(params) => <TextField {...params} label="SUB Division" />}
+      renderInput={(params) => <TextField {...params} label="Sub Division" />}
       isOptionEqualToValue={(option, value) => option.value === value.value}
-
     />
-        
+ 
+ &nbsp;&nbsp;&nbsp;&nbsp;   
+
+<Autocomplete
+    multiple
+      disablePortal
+      id="combo-box-demo"
+      onChange={handleLastreadChange}
+      options={[
+        ...(lastread.length > 0 ? [{ value: "All", label: "ALL" }] : []),
+        ...lastread.map((option) => ({
+          value: option.diff,
+          label: option.lastread_status,
+        })),
+      ]}
+      sx={{ width: 200 }}
+      renderInput={(params) => <TextField {...params} label="Last Read Status" />}
+      isOptionEqualToValue={(option, value) => option.value === value.value}
+    />
 
 </Box>
 </AccordionDetails>
