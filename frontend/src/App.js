@@ -6,24 +6,19 @@ import logo from './white.png';
 import './App.css';
 import DropdownOptions from './components/dropdown';
 import NetDropdown from './components/netdropdown';
+import Layout from './components/Layout';
+
 
 
 export default function App() {
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  // const [value, setValue] = React.useState(0);
+  // const handleChange = (event, newValue) => {
+  //   setValue(newValue);
+  // };
 
   return (
-
-  
-    <Box sx={{ width: '100%' }} align="center">
-       
-       <div className="starting-box">
-
-<img src={ logo } alt="logo" height={45} />
-
-</div>
+    <Layout>
+        {/* <Box sx={{ width: '100%'}} align="center">
       <Tabs
         value={value}
         onChange={handleChange}
@@ -36,7 +31,10 @@ export default function App() {
       </Tabs>
       {value === 0 && <DropdownOptions />}
       {value === 1 && <NetDropdown/>}
-    </Box>
+        </Box> */}
+        </Layout>
+      
+
   );
 }
 

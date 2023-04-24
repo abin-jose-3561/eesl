@@ -10,6 +10,8 @@ import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import Layout from './Layout';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 // import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -17,7 +19,7 @@ const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 
-const Dropdown = ()=> {
+const Dropdown = (theme)=> {
 
     //For storing the data in an array when an option is selected
     const [discom,setDiscom] = useState([])
@@ -278,7 +280,7 @@ console.log("Selected Subdivision",selectedsubdivision)
 console.log("Selected Option Names",optionname)
 
   return (
-    <> 
+  <ThemeProvider theme={theme}> 
 <Accordion>
 <AccordionSummary
 //expandIcon={<ExpandMoreIcon />
@@ -462,7 +464,7 @@ console.log("Selected Option Names",optionname)
 
         
 
-        </>
+</ThemeProvider >
   )
 }
 

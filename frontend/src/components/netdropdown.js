@@ -2,7 +2,7 @@ import React, { useEffect,useState } from 'react'
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import DisplayData from './table'
-import { Box, Button } from '@mui/material';
+import { Box, Button, ThemeProvider } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -11,7 +11,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const NetDropdown = ()=> {
+const NetDropdown = (theme)=> {
     const [gss,setGss] = useState([])
     const [thirtythree,setThirtythree] = useState([])
     const [substation,setSubstation] = useState([])
@@ -252,7 +252,7 @@ console.log(selecteddt)
 console.log(optionname)
 
   return (
-
+    <ThemeProvider theme={theme}> 
 <Box>
     <Box align="center" display="flex" marginTop="20px" marginLeft="20px">
         <Autocomplete
@@ -423,6 +423,7 @@ console.log(optionname)
         {showtable && <DisplayData optionname={optionname} /> }
 
         </Box>
+        </ThemeProvider>
   )
 }
 
