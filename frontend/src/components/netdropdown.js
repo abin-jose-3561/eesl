@@ -3,6 +3,13 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import DisplayData from './table'
 import { Box, Button } from '@mui/material';
+import Checkbox from '@mui/material/Checkbox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+
+
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const NetDropdown = ()=> {
     const [gss,setGss] = useState([])
@@ -250,8 +257,7 @@ console.log(optionname)
     <Box align="center" display="flex" marginTop="20px" marginLeft="20px">
         <Autocomplete
         multiple
-      disablePortal
-      id="combo-box-demo"
+      id="checkboxes-tags-demo"
       onChange={handleGssChange}
       options={[
         ...(gss.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -260,6 +266,19 @@ console.log(optionname)
           label: option.nin_id,
         })),
       ]}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="GSS" />}
     />
@@ -270,7 +289,7 @@ console.log(optionname)
 <Autocomplete
   multiple
   disablePortal
-  id="combo-box-demo"
+  id="checkboxes-tags-demo"
   onChange={handleThirtythreeChange}
   options={[
     ...(thirtythree.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -279,6 +298,19 @@ console.log(optionname)
       label: option.nin_id,
     })),
   ]}
+  disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
   sx={{ width: 200 }}
   renderInput={(params) => <TextField {...params} label="33KV Feeder" />}
 />
@@ -289,7 +321,7 @@ console.log(optionname)
  <Autocomplete
       multiple
       disablePortal
-      id="combo-box-demo"
+      id="checkboxes-tags-demo"
       onChange={handleSubstationChange}
       options={[
         ...(substation.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -298,6 +330,19 @@ console.log(optionname)
           label: option.nin_id,
         })),
       ]}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Substation" />}
      
@@ -307,7 +352,7 @@ console.log(optionname)
 <Autocomplete
       multiple
       disablePortal
-      id="combo-box-demo"
+      id="checkboxes-tags-demo"
       onChange={handleElevenChange}
       options={[
         ...(eleven.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -316,6 +361,19 @@ console.log(optionname)
           label: option.nin_id,
         })),
       ]}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="11KV Feeder" />}
  
@@ -326,7 +384,7 @@ console.log(optionname)
 <Autocomplete
     multiple
       disablePortal
-      id="combo-box-demo"
+      id="checkboxes-tags-demo"
       onChange={handleDtChange}
       options={[
         ...(dt.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -335,6 +393,19 @@ console.log(optionname)
           label: option.nin_id,
         })),
       ]}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="DT" />}
 

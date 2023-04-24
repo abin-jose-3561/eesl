@@ -7,7 +7,15 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
+import Checkbox from '@mui/material/Checkbox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+
 // import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
 
 const Dropdown = ()=> {
 
@@ -345,8 +353,7 @@ console.log("Selected Option Names",optionname)
 
         <Autocomplete
         multiple
-      disablePortal
-      id="combo-box-demo"
+      id="checkboxes-tags-demo"
       onChange={handleStateChange}
       options={[    ...(discom.length > 0 ? [{ value: "All", label: "ALL" }] : []),
       ...discom.map((option) => ({
@@ -354,6 +361,20 @@ console.log("Selected Option Names",optionname)
         label: option.office_id,
       })),
     ]}
+    disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
+
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Discom" />}
       isOptionEqualToValue={(option, value) => option.value === value.value}
@@ -364,8 +385,7 @@ console.log("Selected Option Names",optionname)
 
 <Autocomplete
   multiple
-  disablePortal
-  id="combo-box-demo"
+  id="checkboxes-tags-demo"
   onChange={handleZoneChange}
   options={[
     ...(zone.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -374,6 +394,19 @@ console.log("Selected Option Names",optionname)
       label: option.office_id,
     })),
   ]}
+  disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
   sx={{ width: 200 }}
   renderInput={(params) => <TextField {...params} label="Zone" />}
   isOptionEqualToValue={(option, value) => option.value === value.value}
@@ -384,8 +417,7 @@ console.log("Selected Option Names",optionname)
 
  <Autocomplete
       multiple
-      disablePortal
-      id="combo-box-demo"
+      id="checkboxes-tags-demo"
       onChange={handleCircleChange}
       options={[
         ...(circle.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -394,6 +426,19 @@ console.log("Selected Option Names",optionname)
           label: option.office_id,
         })),
       ]}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Circle" />}
       isOptionEqualToValue={(option, value) => option.value === value.value}
@@ -403,8 +448,7 @@ console.log("Selected Option Names",optionname)
 
 <Autocomplete
       multiple
-      disablePortal
-      id="combo-box-demo"
+      id="checkboxes-tags-demo"
       onChange={handleDivisionChange}
       options={[
         ...(division.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -413,6 +457,19 @@ console.log("Selected Option Names",optionname)
           label: option.office_id,
         })),
       ]}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Division" />}
       isOptionEqualToValue={(option, value) => option.value === value.value}
@@ -423,8 +480,7 @@ console.log("Selected Option Names",optionname)
 
 <Autocomplete
     multiple
-      disablePortal
-      id="combo-box-demo"
+      id="checkboxes-tags-demo"
       onChange={handleSubdivisionChange}
       options={[
         ...(subdivision.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -433,6 +489,19 @@ console.log("Selected Option Names",optionname)
           label: option.office_id,
         })),
       ]}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Sub Division" />}
       isOptionEqualToValue={(option, value) => option.value === value.value}
@@ -460,13 +529,15 @@ console.log("Selected Option Names",optionname)
 </Box>
 </AccordionDetails>
 
-</Accordion>
-
-        <br/><br/>
+<br/><br/>
         <Button variant="contained"  type="submit" value="Fetch" onClick={(e) => setShowtable(true)}>FETCH</Button>
         <br/><br/>
        
         {showtable && <DisplayData optionname={optionname} /> }
+
+</Accordion>
+
+        
 
         </>
   )
