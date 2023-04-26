@@ -10,14 +10,18 @@ import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-
-// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import dayjs from "dayjs";
+import Stack from "@mui/material/Stack";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import format from "date-fns/format";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-
-const Dropdown = ()=> {
+export default function Dropdown  () {
 
     //For storing the data in an array when an option is selected
     const [discom,setDiscom] = useState([])
@@ -26,6 +30,10 @@ const Dropdown = ()=> {
     const [division,setDivision] = useState([])
     const [subdivision,setSubdivision] = useState([])
     const [lastread, setLastread]= useState([])
+    const [lastcommdate,setLastcommdate]=useState([])
+    const [value, setValue] = useState(dayjs("2022-11-24T21:11:54"));
+    console.log("dd",value)
+    
 
 //For storing the selected option's sequence ids 
     const [selecteddiscom,setSelectedDiscom] = useState('')
@@ -34,7 +42,8 @@ const Dropdown = ()=> {
     const [selecteddivision,setSelectedDivision] = useState('')
     const [selectedsubdivision,setSelectedSubDivision] = useState('')
     const [selectedlast,setSelectedLast] = useState('')
-
+    const [selectedlastcommdate,setSelectedLastcommdate] =useState('')
+  
 // For storing the selected option names
   const [optionname, setOptionname] = useState({
     optiondiscom : '',
@@ -42,34 +51,62 @@ const Dropdown = ()=> {
     optioncircle : '',
     optiondivision : '',
     optionsubdivision : '',
-    optionlastread : ''
+    optionlastread : '',
+    optionlastcommdate:'',
+    optiondate:''
   })
 
   const[showtable,setShowtable] = useState(false)
  
 
+ 
+ 
+
+  const handleDateChange = (e) => {
+    setShowtable(false)
+    setValue(e);
+    console.log("date", e)
+    const formatteddate = dayjs(e).format('YYYY-MM-DD');
+    console.log("FormatedDate",formatteddate)
+
+    setOptionname({
+      ...optionname,
+      optiondate : formatteddate,
+  });
+    
+  };
+
+  
+
+ 
+ 
 
 //to get the values of discom
-const fetchStates =async () =>{
-  const response =await fetch("http://localhost:5000/discom");
-  const data = await response.json();
-  setDiscom(data)
-  const response1 =await fetch("http://localhost:5000/zone");
-  const data1 = await response1.json();
-  setZone(data1)
-  const response2 =await fetch("http://localhost:5000/circle");
-  const data2 = await response2.json();
-  setCircle(data2)
-  const response3 =await fetch("http://localhost:5000/division");
-  const data3 = await response3.json();
-  setDivision(data3)
-  const response4 =await fetch("http://localhost:5000/subdivision");
-  const data4 = await response4.json();
-  setSubdivision(data4)
 
-  const response5 =await fetch("http://localhost:5000/lastread");
-  const data5 = await response5.json();
-  setLastread(data5)
+  const fetchStates =async () =>{
+    const response =await fetch("http://localhost:5000/discom");
+    const data = await response.json();
+    setDiscom(data)
+    const response1 =await fetch("http://localhost:5000/zone");
+    const data1 = await response1.json();
+    setZone(data1)
+    const response2 =await fetch("http://localhost:5000/circle");
+    const data2 = await response2.json();
+    setCircle(data2)
+    const response3 =await fetch("http://localhost:5000/division");
+    const data3 = await response3.json();
+    setDivision(data3)
+    const response4 =await fetch("http://localhost:5000/subdivision");
+    const data4 = await response4.json();
+    setSubdivision(data4)
+
+    const response5 =await fetch("http://localhost:5000/lastread");
+    const data5 = await response5.json();
+    setLastread(data5)
+
+    const response6 =await fetch("http://localhost:5000/lastcommdate");
+    const data6 = await response6.json();
+    setLastcommdate(data6)
 
 };
     useEffect(()=>{
@@ -78,7 +115,6 @@ const fetchStates =async () =>{
       }
 
     },[selecteddiscom,selectedzone,selectedcircle,selecteddivision,selectedsubdivision]);
-
 
 // when a discom is selected to get the zone dropdown values
 const handleStateChange = async (event, value) => {
@@ -170,8 +206,6 @@ const handleZoneChange = async (event, value) => {
 
 console.log("Selected Zone", selectedzone)
 console.log(discom)
-
-
 
 // when a circle is selected to get the division dropdown values
 
@@ -304,7 +338,6 @@ const handleSubdivisionChange = async (event,value) => {
 
 };
 
-
 // when a lasst read is selected to get the section dropdown values
 const handleLastreadChange = async (event,value) => {
   let lastreadids;
@@ -337,11 +370,43 @@ console.log("selected lastread",selectedlast)
 console.log("Selected Subdivision",selectedsubdivision)
 console.log("Selected Option Names",optionname)
 
+//when a lastcommunication date is selected to set the dropdowns
+const handleLastcommdateChange = async (event,value) => {
+
+  let lastdate;
+  let Labellastdate
+  
+  if (value.some((v) => v.value === "All")) {
+  //  lastdate = lastcommdate.filter((v) => v.last_commdate!== "All").map((v) => v.diff).join(",");
+  // setSelectedLastcommdate(lastdate);
+  
+   Labellastdate = lastcommdate.filter((v) => v.last_commdate !== "All").map((v) => v.last_commdate).join(",");
+  setOptionname({
+   ...optionname,
+  optionlastcommdate : Labellastdate});
+  
+  }
+  
+else {
+  
+  // lastdate = value.map((v) => v.value);
+  // setSelectedLastcommdate(lastdate.join(","))
+  Labellastdate = value.map((v) => v.label);
+   setOptionname({
+   ...optionname,
+   optionlastcommdate : Labellastdate.join(",")});
+   }
+   setShowtable(false)
+ 
+  };
+
   return (
     <> 
+     
 <Accordion>
 <AccordionSummary
 //expandIcon={<ExpandMoreIcon />
+expandIcon={<ExpandMoreIcon />}
  aria-controls="panel1a-content"
  id="panel1a-header"
 >
@@ -350,6 +415,9 @@ console.log("Selected Option Names",optionname)
  <AccordionDetails>
 
     <Box align="center" display="flex" marginTop="20px" marginLeft="20px">
+    <div className="dropdown">
+
+      
 
         <Autocomplete
         multiple
@@ -381,8 +449,6 @@ console.log("Selected Option Names",optionname)
     />
     
 
-&nbsp;&nbsp;&nbsp;&nbsp;
-
 <Autocomplete
   multiple
   id="checkboxes-tags-demo"
@@ -413,8 +479,6 @@ console.log("Selected Option Names",optionname)
 />
 
 
- &nbsp;&nbsp;&nbsp;&nbsp;
-
  <Autocomplete
       multiple
       id="checkboxes-tags-demo"
@@ -444,7 +508,6 @@ console.log("Selected Option Names",optionname)
       isOptionEqualToValue={(option, value) => option.value === value.value}
      
     />
-&nbsp;&nbsp;&nbsp;&nbsp;
 
 <Autocomplete
       multiple
@@ -476,8 +539,6 @@ console.log("Selected Option Names",optionname)
  
     />
 
-&nbsp;&nbsp;&nbsp;&nbsp;
-
 <Autocomplete
     multiple
       id="checkboxes-tags-demo"
@@ -507,7 +568,7 @@ console.log("Selected Option Names",optionname)
       isOptionEqualToValue={(option, value) => option.value === value.value}
     />
  
- &nbsp;&nbsp;&nbsp;&nbsp;   
+ <div className='drop'>
 
 <Autocomplete
     multiple
@@ -526,21 +587,59 @@ console.log("Selected Option Names",optionname)
       isOptionEqualToValue={(option, value) => option.value === value.value}
     />
 
+              <Autocomplete
+                                      multiple
+                                        disablePortal
+                                        className='selectfield'
+                                        id="combo-box-demo"
+                                        onChange={handleLastcommdateChange}
+                                        options={[
+                                          ...(lastcommdate.length > 0 ? [{ value: "All", label: "ALL" }] : []),
+                                          ...lastcommdate.map((option) => ({
+                                            value: option.last_commdate,
+                                            label: option.last_commdate,
+                                          })),
+                                        ]}
+                                        sx={{ width: 300, paddingBottom: 50}}
+                                        renderInput={(params) => <TextField {...params} label="Last Communication Date" />}
+                                        isOptionEqualToValue={(option, value) => option.value === value.value}
+
+               />
+
+
+
+ <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Stack spacing={3}>
+        <DesktopDatePicker
+          
+          label="Date "
+          inputFormat="DD-MM-YYYY"
+          onChange={handleDateChange}
+          renderInput={(params) => <TextField {...params} />}
+          disableFuture={true}
+        />
+       
+      </Stack>
+    </LocalizationProvider>
+
+</div>   
+ </div>
+
 </Box>
-</AccordionDetails>
+
+
+
 
 <br/><br/>
         <Button variant="contained"  type="submit" value="Fetch" onClick={(e) => setShowtable(true)}>FETCH</Button>
         <br/><br/>
        
-        {showtable && <DisplayData optionname={optionname} /> }
+ </AccordionDetails>      
 
 </Accordion>
 
-        
+{showtable && <DisplayData optionname={optionname} /> }
 
         </>
   )
 }
-
-export default Dropdown;

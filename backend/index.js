@@ -42,6 +42,11 @@ app.get("/:column", async (req, res) => {
           `select distinct lastread_status, diff from tabledata`,))
       : null;
 
+  column == "lastcommdate"
+  ? (data = await pool.query(
+    `select distinct last_commdate from tabledata`,))
+: null;
+
   res.json(data.rows);
     } catch (error) {
     console.error(error.message);
@@ -270,11 +275,11 @@ console.error(error.message);
   
 //To fetch
   app.get("/table/tabb", async (req, res) => {
-    const { discom, zone, circle, division, subdivision, lastread } = req.query;
-    console.log("op", discom, zone, circle, division, subdivision,lastread);
+    const { discom, zone, circle, division, subdivision, lastread, lastcomm, optiondate } = req.query;
+    console.log("op", discom, zone, circle, division, subdivision,lastread, lastcomm, optiondate);
     let query = "SELECT * FROM tabledata WHERE 1=1 ";
     // let params = [];
-    console.log(typeof(discom), zone, circle, division, subdivision);
+    console.log(optiondate);
   
     if (discom) {
       const discomArray = discom.split(",");
@@ -336,6 +341,23 @@ console.error(error.message);
         // params.push(...subdivisionArray);
       }
     }
+
+    if (lastcomm) {
+      const lastcommArray = lastcomm.split(",");
+      if (lastcommArray.length > 0) {
+        query += `AND last_commdate IN (${lastcommArray
+          .map((d) => `'${d.trim()}'`)
+          .join(",")}) `;
+        // params.push(...subdivisionArray);
+      }
+    }
+
+    if(optiondate) {
+        query += `AND creation_date1='${optiondate}'`
+          
+        // params.push(...subdivisionArray);
+      }
+    
     console.log(query);
   
     await pool
