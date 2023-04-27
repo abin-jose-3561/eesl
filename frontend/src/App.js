@@ -6,37 +6,59 @@ import logo from './white.png';
 import './App.css';
 import DropdownOptions from './components/dropdown';
 import NetDropdown from './components/netdropdown';
+import Layout from './components/Layout';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { Paper } from '@mui/material';
 
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    
+    primary: {
+      main: '#1976d2',
+    },
+  },
+});
+
+const lightTheme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#white',
+    },
+  },
+});
 
 export default function App() {
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+
+  const [theme, setTheme] = React.useState(darkTheme)
+
+  const handleThemeChange = () => {
+    if(theme === darkTheme){
+        setTheme(lightTheme)
+    }else{
+        setTheme(darkTheme)
+    }
+  }
+  // const [value, setValue] = React.useState(0);
+  // const handleChange = (event, newValue) => {
+  //   setValue(newValue);
+  // };
 
   return (
+    <ThemeProvider theme={theme}>
+      <Box display="flex"
+      alignItems="center"
+      justifyContent="center"
+      height="100vh">
+      <Paper style={{ width: '100%', height: '100%',}}>
+      <Layout theme={theme} handleThemeChange={handleThemeChange}/>
+      </Paper>
+      </Box>
+    </ThemeProvider>
 
-  
-    <Box sx={{ width: '100%' }} align="center">
-       
-       <div className="starting-box">
+      
 
-<img src={ logo } alt="logo" height={45} />
-
-</div>
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        textColor="secondary"
-        indicatorColor="secondary"
-        aria-label="hierarchy tabs"
-      >
-        <Tab label="Org Hierarchy" />
-        <Tab label="Net Hierarchy" />
-      </Tabs>
-      {value === 0 && <DropdownOptions />}
-      {value === 1 && <NetDropdown/>}
-    </Box>
   );
 }
 

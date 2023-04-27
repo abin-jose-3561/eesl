@@ -42,6 +42,11 @@ app.get("/:column", async (req, res) => {
           `select distinct lastread_status, diff from tabledata`,))
       : null;
 
+  column == "lastcommdate"
+  ? (data = await pool.query(
+    `select distinct last_commdate from tabledata`,))
+: null;
+
   res.json(data.rows);
     } catch (error) {
     console.error(error.message);
@@ -267,14 +272,14 @@ column === "circle"?
 console.error(error.message);
 }
 });
-  
+
 //To fetch
   app.get("/table/tabb", async (req, res) => {
-    const { discom, zone, circle, division, subdivision, lastread } = req.query;
-    console.log("op", discom, zone, circle, division, subdivision,lastread);
+    const { discom, zone, circle, division, subdivision, lastread, lastcomm, optiondate,optiondate1 } = req.query;
+    console.log("op", discom, zone, circle, division, subdivision,lastread, lastcomm, optiondate,optiondate1);
     let query = "SELECT * FROM tabledata WHERE 1=1 ";
     // let params = [];
-    console.log(typeof(discom), zone, circle, division, subdivision);
+    console.log(optiondate);
   
     if (discom) {
       const discomArray = discom.split(",");
@@ -336,6 +341,23 @@ console.error(error.message);
         // params.push(...subdivisionArray);
       }
     }
+
+    if (lastcomm) {
+      const lastcommArray = lastcomm.split(",");
+      if (lastcommArray.length > 0) {
+        query += `AND last_commdate IN (${lastcommArray
+          .map((d) => `'${d.trim()}'`)
+          .join(",")}) `;
+        // params.push(...subdivisionArray);
+      }
+    }
+
+    if(optiondate) {
+        query += `AND creation_date1 BETWEEN '${optiondate}' AND '${optiondate1}'`
+          
+        // params.push(...subdivisionArray);
+      }
+    
     console.log(query);
   
     await pool
@@ -438,6 +460,14 @@ app.get("/thirtythree/:column/:id", async (req, res) => {
   const  { column, id } =req.params;
 console.log(column,id)
 
+column === "gss"?
+(data = await pool.query(
+`SELECT * FROM net_hier t2 WHERE t2.nin_type = 'GSS' AND t2.sequence_id IN(
+  SELECT t3.parent_nin FROM net_hier t3 WHERE t3.nin_type = '33 KV FEEDER' AND t3.sequence_id =  ANY($1::text[]))`,
+  [id.split(',')])
+) : null;
+
+
   column === "thirtythree"?
     (data = await pool.query(
     `SELECT * FROM net_hier WHERE parent_nin = ANY($1::text[])`,
@@ -473,7 +503,21 @@ app.get("/substation/:column/:id", async (req, res) => {
   try {
   const  { column, id } =req.params;
 
-  
+  column === "gss"?
+  (data = await pool.query(
+    `SELECT * FROM net_hier t1 WHERE t1.nin_type = 'GSS' AND t1.sequence_id IN(
+      SELECT t2.parent_nin FROM net_hier t2 WHERE t2.nin_type = '33 KV FEEDER' AND t2.sequence_id IN(
+        SELECT t3.parent_nin FROM net_hier t3 WHERE t3.nin_type = 'SUBSTATION' AND t3.sequence_id = ANY($1::text[])))`,
+    [id.split(',')])
+  ) : null;
+
+  column === "thirtythree"?
+    (data = await pool.query(
+      `SELECT * FROM net_hier t2 WHERE t2.nin_type = '33 KV FEEDER' AND t2.sequence_id IN(
+        SELECT t3.parent_nin FROM net_hier t3 WHERE t3.nin_type = 'SUBSTATION' AND t3.sequence_id =  ANY($1::text[]))`,
+      [id.split(',')])
+    ) : null;
+
   column === "substation"?
     (data = await pool.query(
     `SELECT * FROM net_hier WHERE parent_nin = ANY($1::text[])`,
@@ -495,18 +539,91 @@ app.get("/substation/:column/:id", async (req, res) => {
 }
 });
 
-app.get("/eleven/eleven/:id", async (req, res) => {
-    
-  const  { id } =req.params;
+app.get("/eleven/:column/:id", async (req, res) => {
   try {
-    const {rows} = await pool.query(`SELECT * FROM net_hier WHERE parent_nin = ANY($1::text[])`,[id.split(',')]);
-    res.json(rows);
+  const  { column, id } =req.params;
+
+  column ==="gss"?
+  (data = await pool.query(
+    `SELECT * FROM net_hier t1 WHERE t1.nin_type = 'GSS' AND t1.sequence_id IN(
+      SELECT t2.parent_nin FROM net_hier t2 WHERE t2.nin_type = '33 KV FEEDER' AND t2.sequence_id IN(
+        SELECT t3.parent_nin FROM net_hier t3 WHERE t3.nin_type = 'SUBSTATION' AND t3.sequence_id IN(
+          SELECT t4.parent_nin FROM net_hier t4 WHERE t4.nin_type = '11 KV FEEDER' AND t4.sequence_id = ANY($1::text[]))))`,
+    [id.split(',')])
+  ) : null;
+
+  column === "thirtythree"?
+    (data = await pool.query(
+      `SELECT * FROM net_hier t1 WHERE t1.nin_type = '33 KV FEEDER' AND t1.sequence_id IN(
+        SELECT t2.parent_nin FROM net_hier t2 WHERE t2.nin_type = 'SUBSTATION' AND t2.sequence_id IN(
+          SELECT t3.parent_nin FROM net_hier t3 WHERE t3.nin_type = '11 KV FEEDER' AND t3.sequence_id = ANY($1::text[])))`,
+      [id.split(',')])
+    ) : null;
+
+    column === "substation"?
+    (data = await pool.query(
+    `SELECT * FROM net_hier t2 WHERE t2.nin_type = 'SUBSTATION' AND t2.sequence_id IN(
+      SELECT t3.parent_nin FROM net_hier t3 WHERE t3.nin_type = '11 KV FEEDER' AND t3.sequence_id =  ANY($1::text[]))`,
+      [id.split(',')])
+    ) : null;
+
+    column === "division"?
+    (data = await pool.query(`SELECT * FROM net_hier WHERE parent_nin = ANY($1::text[])`,
+    [id.split(',')])
+    ) : null;
+
+    res.json(data.rows);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Error fetching data from database');
   }
 });
   
+
+
+app.get("/dt/:column/:id", async (req, res) => {
+  try {
+  const  {column , id } =req.params;
+
+  column === "gss"?
+(data = await pool.query(
+  `SELECT * FROM net_hier t1 WHERE t1.nin_type = 'GSS' AND t1.sequence_id IN(
+    SELECT t2.parent_nin FROM net_hier t2 WHERE t2.nin_type = '33 KV FEEDER' AND t2.sequence_id IN(
+      SELECT t3.parent_nin FROM net_hier t3 WHERE t3.nin_type = 'SUBSTATION' AND t3.sequence_id IN(
+        SELECT t4.parent_nin FROM net_hier t4 WHERE t4.nin_type = '11 KV FEEDER' AND t4.sequence_id IN(
+        SELECT t5.parent_nin FROM net_hier t5 WHERE t5.nin_type = 'DT' AND t5.sequence_id = ANY($1::text[])))))`,
+  [id.split(',')])
+) : null;
+
+column === "thirtythree"?
+  (data = await pool.query(
+    `SELECT * FROM net_hier t1 WHERE t1.nin_type = '33 KV FEEDER' AND t1.sequence_id IN(
+      SELECT t2.parent_nin FROM net_hier t2 WHERE t2.nin_type = 'SUBSTATION' AND t2.sequence_id IN(
+        SELECT t3.parent_nin FROM net_hier t3 WHERE t3.nin_type = '11 KV FEEDER' AND t3.sequence_id IN(
+          SELECT t4.parent_nin FROM net_hier t4 WHERE t4.nin_type = 'DT' AND t4.sequence_id = ANY($1::text[]))))`,
+    [id.split(',')])
+  ) : null;
+
+column === "substation"?
+  (data = await pool.query(
+  `SELECT * FROM net_hier t2 WHERE t2.nin_type = 'SUBSTATION' AND t2.sequence_id IN(
+    SELECT t2.parent_nin FROM net_hier t2 WHERE t2.nin_type = '11 KV FEEDER' AND t2.sequence_id IN(
+    SELECT t3.parent_nin FROM net_hier t3 WHERE t3.nin_type = 'DT' AND t3.sequence_id =  ANY($1::text[])))`,
+    [id.split(',')])
+  ) : null;
+
+  column === "eleven"?
+  (data = await pool.query(
+    `SELECT * FROM net_hier t2 WHERE t2.nin_type = '11 KV FEEDER' AND t2.sequence_id IN(
+      SELECT t3.parent_nin FROM net_hier t3 WHERE t3.nin_type = 'DT' AND t3.sequence_id =  ANY($1::text[]))`,
+    [id.split(',')])
+  ) : null;
+ 
+  res.json(data.rows);
+} catch (error) {
+console.error(error.message);
+}
+});
+
   app.listen(5000, () => {
     console.log("server has started on port 5000");
   });

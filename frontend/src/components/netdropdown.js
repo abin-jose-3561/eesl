@@ -3,19 +3,31 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import DisplayData from './table'
 import { Box, Button } from '@mui/material';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import Checkbox from '@mui/material/Checkbox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const NetDropdown = ()=> {
+
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+export default function NetDropdown  () {
     const [gss,setGss] = useState([])
     const [thirtythree,setThirtythree] = useState([])
     const [substation,setSubstation] = useState([])
     const [eleven,setEleven] = useState([])
     const [dt,setDt] = useState([])
  
-    const [selectedgss,setSelectedGss] = useState(null)
-    const [selectedthirtythree,setSelectedThirtythree] = useState(null)
-    const [selectedsubstation,setSelectedSubstation] = useState(null)
-    const [selectedeleven,setSelectedEleven] = useState(null)
-    const [selecteddt,setSelectedDt] = useState(null)
+    const [selectedgss,setSelectedGss] = useState('')
+    const [selectedthirtythree,setSelectedThirtythree] = useState('')
+    const [selectedsubstation,setSelectedSubstation] = useState('')
+    const [selectedeleven,setSelectedEleven] = useState('')
+    const [selecteddt,setSelectedDt] = useState('')
 
 
   const [optionname, setOptionname] = useState({
@@ -31,7 +43,7 @@ const NetDropdown = ()=> {
 
 
 //to get the values of discom
-    useEffect(()=>{
+    
         const fetchStates =async () =>{
             const response =await fetch("http://localhost:5000/net/gss");
             const data = await response.json();
@@ -48,13 +60,17 @@ const NetDropdown = ()=> {
             const response4 =await fetch("http://localhost:5000/net/dt");
             const data4 = await response4.json();
             setDt(data4)
+          };
 
-        };
+
+useEffect(()=>{
+  if(selectedgss ==='' && selectedthirtythree ==='' && selectedsubstation =='' && selectedeleven ==='' && selecteddt ===''){ 
         fetchStates();
-    },[]);
+  }
+    },[selectedgss,selectedthirtythree,selectedsubstation,selectedeleven,selecteddt]);
 
   
-// when a discom is selected to get the zone dropdown values
+// when a GSS is selected to get the 33kv dropdown values
 const handleGssChange = async (event, value) => {
     let gsss;
     let Labelgss
@@ -94,7 +110,7 @@ const handleGssChange = async (event, value) => {
     setDt(data3);
   };
 
-    console.log(selectedgss)
+    console.log("gss",selectedgss)
   
 
 // when a Thirtythree is selected to get the circle dropdown values
@@ -122,22 +138,22 @@ const handleThirtythreeChange = async (event, value) => {
 
     setShowtable(false);
 
-    const response = await fetch(
-      `http://localhost:5000/thirtythree/thirtythree/${thirtythrees}` );
+    const responsegss = await fetch(`http://localhost:5000/thirtythree/gss/${thirtythrees}` );
+    const datagss = await responsegss.json();
+    setGss(datagss);
+
+    const response = await fetch(`http://localhost:5000/thirtythree/thirtythree/${thirtythrees}` );
     const data = await response.json();
     setSubstation(data);
-    const response1 = await fetch(
-      `http://localhost:5000/thirtythree/Substation/${thirtythrees}`);
+    const response1 = await fetch(`http://localhost:5000/thirtythree/substation/${thirtythrees}`);
     const data1 = await response1.json();
     setEleven(data1);
-
-    const response2 = await fetch(
-      `http://localhost:5000/thirtythree/eleven/${thirtythrees}`);
+    const response2 = await fetch(`http://localhost:5000/thirtythree/eleven/${thirtythrees}`);
     const data2 = await response2.json();
     setDt(data2);
 };
 
-console.log(selectedthirtythree)
+console.log("33kv",selectedthirtythree)
 
 
 
@@ -170,6 +186,13 @@ console.log(selectedthirtythree)
           }
 
         setShowtable(false);
+        const responsegss = await fetch(`http://localhost:5000/substation/gss/${substations}` );
+        const datagss = await responsegss.json();
+        setGss(datagss);
+        const responsethree =await fetch(`http://localhost:5000/substation/thirtythree/${substations}`);
+        const datathree = await responsethree.json();
+        setThirtythree(datathree)
+
         const response =await fetch(`http://localhost:5000/substation/substation/${substations}`);
         const data = await response.json();
         setEleven(data)
@@ -177,7 +200,7 @@ console.log(selectedthirtythree)
         const data1 = await response1.json();
         setDt(data1)
     };
-    console.log(selectedsubstation)
+    console.log("substation",selectedsubstation)
    
 
  // when a eleven is selected to get the subeleven dropdown values
@@ -205,13 +228,24 @@ console.log(selectedthirtythree)
           }
 
         setShowtable(false)
+
+        const responsegss =await fetch(`http://localhost:5000/eleven/gss/${elevens}`);
+        const datagss = await responsegss.json();
+        setGss(datagss)
+        const responsethree =await fetch(`http://localhost:5000/eleven/thirtythree/${elevens}`);
+        const datathree = await responsethree.json();
+        setThirtythree(datathree)
+        const responsesub =await fetch(`http://localhost:5000/eleven/substation/${elevens}`);
+        const datasub = await responsesub.json();
+        setSubstation(datasub)
+
         const response =await fetch(`http://localhost:5000/eleven/eleven/${elevens}`);
-            const data = await response.json();
-           setDt(data)
+        const data = await response.json();
+        setDt(data)
            
     };
     console.log(eleven)
-    console.log(selectedeleven)
+    console.log("11kv",selectedeleven)
    
 
 // when a subdivision is selected to get the section dropdown values
@@ -238,20 +272,43 @@ const handleDtChange = async (event,value) => {
        
       }
     setShowtable(false)
+    const responsegss =await fetch(`http://localhost:5000/dt/gss/${dts}`);
+    const datagss = await responsegss.json();
+    setGss(datagss)
+    const responsethree =await fetch(`http://localhost:5000/dt/thirtythree/${dts}`);      const datathree = await responsethree.json();
+    setThirtythree(datathree)
+    const responsesub =await fetch(`http://localhost:5000/dt/substation/${dts}`);
+    const datasub = await responsesub.json();
+    setSubstation(datasub)
+    const responseele =await fetch(`http://localhost:5000/dt/eleven/${dts}`);
+    const dataele = await responseele.json();
+    setEleven(dataele)
 
 };
 
-console.log(selecteddt)
-console.log(optionname)
+console.log("dt",selecteddt)
+console.log("optionname",optionname)
 
   return (
+    <> 
+     
+    <Accordion>
+    <AccordionSummary
+    //expandIcon={<ExpandMoreIcon />
+    expandIcon={<ExpandMoreIcon />}
+     aria-controls="panel1a-content"
+     id="panel1a-header"
+    >
+    <Typography>Network Hierarchy Filters</Typography>
+     </AccordionSummary>
+     <AccordionDetails>
 
-<Box>
     <Box align="center" display="flex" marginTop="20px" marginLeft="20px">
+    <div className="dropdown">
+
         <Autocomplete
         multiple
-      disablePortal
-      id="combo-box-demo"
+      id="checkboxes-tags-demo"
       onChange={handleGssChange}
       options={[
         ...(gss.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -260,17 +317,29 @@ console.log(optionname)
           label: option.nin_id,
         })),
       ]}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="GSS" />}
+      isOptionEqualToValue={(option, value) => option.value === value.value}
     />
     
 
-&nbsp;&nbsp;&nbsp;&nbsp;
 
 <Autocomplete
   multiple
-  disablePortal
-  id="combo-box-demo"
+  id="checkboxes-tags-demo"
   onChange={handleThirtythreeChange}
   options={[
     ...(thirtythree.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -279,17 +348,27 @@ console.log(optionname)
       label: option.nin_id,
     })),
   ]}
+  disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
   sx={{ width: 200 }}
   renderInput={(params) => <TextField {...params} label="33KV Feeder" />}
+  isOptionEqualToValue={(option, value) => option.value === value.value}
 />
-
-
- &nbsp;&nbsp;&nbsp;&nbsp;
 
  <Autocomplete
       multiple
-      disablePortal
-      id="combo-box-demo"
+      id="checkboxes-tags-demo"
       onChange={handleSubstationChange}
       options={[
         ...(substation.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -298,16 +377,27 @@ console.log(optionname)
           label: option.nin_id,
         })),
       ]}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Substation" />}
-     
+      isOptionEqualToValue={(option, value) => option.value === value.value}
     />
-&nbsp;&nbsp;&nbsp;&nbsp;
 
 <Autocomplete
       multiple
-      disablePortal
-      id="combo-box-demo"
+      id="checkboxes-tags-demo"
       onChange={handleElevenChange}
       options={[
         ...(eleven.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -316,17 +406,28 @@ console.log(optionname)
           label: option.nin_id,
         })),
       ]}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="11KV Feeder" />}
- 
+      isOptionEqualToValue={(option, value) => option.value === value.value}
     />
 
-&nbsp;&nbsp;&nbsp;&nbsp;
 
 <Autocomplete
     multiple
-      disablePortal
-      id="combo-box-demo"
+      id="checkboxes-tags-demo"
       onChange={handleDtChange}
       options={[
         ...(dt.length > 0 ? [{ value: "All", label: "ALL" }] : []),
@@ -335,24 +436,38 @@ console.log(optionname)
           label: option.nin_id,
         })),
       ]}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="DT" />}
-
+      isOptionEqualToValue={(option, value) => option.value === value.value}
     />
         
-&nbsp;&nbsp;&nbsp;&nbsp;
 
-
+        </div>
 </Box>
 
         <br/><br/>
         <Button variant="contained"  type="submit" value="Fetch" onClick={(e) => setShowtable(true)}>FETCH</Button>
         <br/><br/>
-       
-        {showtable && <DisplayData optionname={optionname} /> }
+</AccordionDetails> 
 
-        </Box>
+{showtable && <DisplayData optionname={optionname} /> }
+
+</Accordion> 
+        
+
+        </>
   )
 }
-
-export default NetDropdown;
