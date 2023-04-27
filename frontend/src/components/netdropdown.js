@@ -64,12 +64,12 @@ export default function NetDropdown  () {
 
 
 useEffect(()=>{
-  if(selectedgss ==='' && selectedthirtythree ==='' && selectedsubstation =='' && selectedeleven ==='' && selecteddt ===''){ 
+  if(optionname.optiongss ==='' && optionname.optionthirtythree ==='' && optionname.optionsubstation ==='' && optionname.optioneleven ==='' && optionname.optiondt ===''){ 
         fetchStates();
   }
-    },[selectedgss,selectedthirtythree,selectedsubstation,selectedeleven,selecteddt]);
+    },[optionname]);
 
-  
+  console.log(gss)
 // when a GSS is selected to get the 33kv dropdown values
 const handleGssChange = async (event, value) => {
     let gsss;
@@ -275,7 +275,8 @@ const handleDtChange = async (event,value) => {
     const responsegss =await fetch(`http://localhost:5000/dt/gss/${dts}`);
     const datagss = await responsegss.json();
     setGss(datagss)
-    const responsethree =await fetch(`http://localhost:5000/dt/thirtythree/${dts}`);      const datathree = await responsethree.json();
+    const responsethree =await fetch(`http://localhost:5000/dt/thirtythree/${dts}`);      
+    const datathree = await responsethree.json();
     setThirtythree(datathree)
     const responsesub =await fetch(`http://localhost:5000/dt/substation/${dts}`);
     const datasub = await responsesub.json();

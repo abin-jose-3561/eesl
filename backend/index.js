@@ -401,6 +401,7 @@ console.error(error.message);
         ? (data = await pool.query(
             `select * from net_hier where nin_type ='DT'`,))
         : null;
+        
     res.json(data.rows);
       } catch (error) {
       console.error(error.message);

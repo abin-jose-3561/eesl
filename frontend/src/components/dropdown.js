@@ -583,7 +583,6 @@ expandIcon={<ExpandMoreIcon />}
 
 <Autocomplete
     multiple
-      disablePortal
       id="combo-box-demo"
       onChange={handleLastreadChange}
       options={[
@@ -593,6 +592,19 @@ expandIcon={<ExpandMoreIcon />}
           label: option.lastread_status,
         })),
       ]}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.label}
+        </li>
+      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Last Read Status" />}
       isOptionEqualToValue={(option, value) => option.value === value.value}

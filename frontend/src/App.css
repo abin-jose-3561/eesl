@@ -66,5 +66,5 @@
       border: 0px solid green;
       padding: 8px;
       margin: 5px;
-      overflow: "auto";
+      /* overflow: "auto"; */
     }
