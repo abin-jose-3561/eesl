@@ -15,13 +15,13 @@ import Stack from "@mui/material/Stack";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import format from "date-fns/format";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 export default function Dropdown  () {
+
 
     //For storing the data in an array when an option is selected
     const [discom,setDiscom] = useState([])
@@ -32,7 +32,7 @@ export default function Dropdown  () {
     const [lastread, setLastread]= useState([])
     const [lastcommdate,setLastcommdate]=useState([])
     const [value, setValue] = useState(dayjs("2022-11-24T21:11:54"));
-    console.log("dd",value)
+    const [value1, setValue1] = useState(dayjs("2022-11-24T21:11:54"));
     
 
 //For storing the selected option's sequence ids 
@@ -43,7 +43,8 @@ export default function Dropdown  () {
     const [selectedsubdivision,setSelectedSubDivision] = useState('')
     const [selectedlast,setSelectedLast] = useState('')
     const [selectedlastcommdate,setSelectedLastcommdate] =useState('')
-  
+
+
 // For storing the selected option names
   const [optionname, setOptionname] = useState({
     optiondiscom : '',
@@ -53,31 +54,12 @@ export default function Dropdown  () {
     optionsubdivision : '',
     optionlastread : '',
     optionlastcommdate:'',
-    optiondate:''
+    optiondate:'',
+    optiondate1:''
   })
 
   const[showtable,setShowtable] = useState(false)
  
-
- 
- 
-
-  const handleDateChange = (e) => {
-    setShowtable(false)
-    setValue(e);
-    console.log("date", e)
-    const formatteddate = dayjs(e).format('YYYY-MM-DD');
-    console.log("FormatedDate",formatteddate)
-
-    setOptionname({
-      ...optionname,
-      optiondate : formatteddate,
-  });
-    
-  };
-
-  
-
  
  
 
@@ -400,6 +382,35 @@ else {
  
   };
 
+
+ 
+ //date change
+
+ const handleDateChange = (e) => {
+  setShowtable(false)
+  setValue(e);
+  console.log("date", e)
+  const formatteddate = dayjs(e).format('YYYY-MM-DD');
+  console.log("FormatedDate",formatteddate)
+
+  setOptionname({
+    ...optionname,
+    optiondate : formatteddate,
+});
+  
+};
+
+ const handleDateChange1 = (e) => {
+    setShowtable(false);
+    setValue1(e);
+    const formatteddate1=dayjs(e).format('YYYY-MM-DD');
+    console.log("formatteddate1",formatteddate1)
+      setOptionname({
+    ...optionname,
+    optiondate1 : formatteddate1
+ });
+ };
+
   return (
     <> 
      
@@ -587,31 +598,30 @@ expandIcon={<ExpandMoreIcon />}
       isOptionEqualToValue={(option, value) => option.value === value.value}
     />
 
-              <Autocomplete
-                                      multiple
-                                        disablePortal
-                                        className='selectfield'
-                                        id="combo-box-demo"
-                                        onChange={handleLastcommdateChange}
-                                        options={[
-                                          ...(lastcommdate.length > 0 ? [{ value: "All", label: "ALL" }] : []),
-                                          ...lastcommdate.map((option) => ({
-                                            value: option.last_commdate,
-                                            label: option.last_commdate,
-                                          })),
-                                        ]}
-                                        sx={{ width: 300, paddingBottom: 50}}
-                                        renderInput={(params) => <TextField {...params} label="Last Communication Date" />}
-                                        isOptionEqualToValue={(option, value) => option.value === value.value}
+<Autocomplete
+                              multiple
+                              disablePortal
+                              className='selectfield'
+                              id="combo-box-demo"
+                              onChange={handleLastcommdateChange}
+                              options={[
+                              ...(lastcommdate.length > 0 ? [{ value: "All", label: "ALL" }] : []),
+                              ...lastcommdate.map((option) => ({
+                              value: option.last_commdate,
+                              label: option.last_commdate,
+                                    })),
+                                ]}
+                              sx={{ width: 300, paddingBottom: 50}}
+                              renderInput={(params) => <TextField {...params} label="Last Communication Date" />}
+                              isOptionEqualToValue={(option, value) => option.value === value.value}
 
                />
 
 
 
- <LocalizationProvider dateAdapter={AdapterDayjs}>
+ {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack spacing={3}>
         <DesktopDatePicker
-          
           label="Date "
           inputFormat="DD-MM-YYYY"
           onChange={handleDateChange}
@@ -620,7 +630,38 @@ expandIcon={<ExpandMoreIcon />}
         />
        
       </Stack>
+    </LocalizationProvider>  */}
+
+
+
+
+<LocalizationProvider dateAdapter={AdapterDayjs}>
+
+  <Stack spacing={3}>
+  <DesktopDatePicker
+    label="From-Date "
+    inputFormat="DD-MMYYYY"
+    className="my-date-picker"
+    onChange={handleDateChange}
+    renderInput={(params) => <TextField {...params} />}
+ />
+ </Stack>
+ </LocalizationProvider>
+
+
+ <LocalizationProvider dateAdapter={AdapterDayjs}>
+ <Stack spacing={3}>
+    <DesktopDatePicker
+    label="To-Date "
+    inputFormat="DD-MMYYYY"
+    className="my-date-picker"
+    onChange={handleDateChange1}
+    renderInput={(params) => <TextField {...params} />}
+    />
+    </Stack>
     </LocalizationProvider>
+
+
 
 </div>   
  </div>

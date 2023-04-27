@@ -60,7 +60,7 @@ const DisplayData = ({optionname}) =>{
 
   const fetchProducts = async () => {
     
-    const queryparams=`?discom=${optionname.optiondiscom}&zone=${optionname.optionzone}&circle=${optionname.optioncircle}&division=${optionname.optiondivision}&subdivision=${optionname.optionsubdivision}&lastread=${optionname.optionlastread}&lastcomm=${optionname.optionlastcommdate}&optiondate=${optionname.optiondate}`;
+    const queryparams=`?discom=${optionname.optiondiscom}&zone=${optionname.optionzone}&circle=${optionname.optioncircle}&division=${optionname.optiondivision}&subdivision=${optionname.optionsubdivision}&lastread=${optionname.optionlastread}&lastcomm=${optionname.optionlastcommdate}&optiondate=${optionname.optiondate}&optiondate1=${optionname.optiondate1}`;
     const response = await axios
       .get(`http://localhost:5000/table/tabb${queryparams}`)
       .catch((err) => console.log(err));

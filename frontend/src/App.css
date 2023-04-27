@@ -38,40 +38,33 @@
 }
 
 .dropdown{
+  display: flex;
+  flex-flow: wrap;
+  height: 170px;
+  width: 100%;
+  gap: 30px;
+  align-items: center;
+}
 
-   display: flex;
+.table{
+  overflow: auto;
+}
   
-   flex-flow: wrap;
-  
-   height: 170px;
-  
-   width: 100%;
-  
-   gap: 30px;
-  
-   align-items: center;
-  
-  
+.selectfield{
+ width: 340px;
    }
 
-   .table{
-  
-   overflow: auto;
-  
-   }
-  
-   .selectfield{
-  
-
-   width: 340px;
-  
-   }
-  
-   .drop{
-  
-   margin-left: 0px;
-  
-   display: flex;
-  
-   gap: 30px;
+.drop{
+  margin-left: 0px;
+  display: flex;
+  gap: 30px;
   }
+
+.starting-box{
+      background-color: rgb(7, 0, 140);
+      width: "100%";
+      border: 0px solid green;
+      padding: 8px;
+      margin: 5px;
+      overflow: "auto";
+    }
