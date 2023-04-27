@@ -50,7 +50,7 @@ export default function App() {
       <Box display="flex"
       alignItems="center"
       justifyContent="center"
-      height="100vh">
+      height="200vh">
       <Paper style={{ width: '100%', height: '100%',}}>
       <Layout theme={theme} handleThemeChange={handleThemeChange}/>
       </Paper>

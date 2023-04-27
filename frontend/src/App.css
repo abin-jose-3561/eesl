@@ -68,3 +68,33 @@
       margin: 5px;
       overflow: "auto";
     }
+
+    .childDate {
+
+      display: inline-flex;
+
+      border-color: transparent;
+
+      width: 160px;
+
+    }
+
+
+
+    .parentDate {
+
+      padding-top: 5px;
+
+      border: 0.1px solid rgb(141, 140, 140);
+
+      border-radius: 5px;
+
+      height: max-content;
+
+      padding-bottom: 5px;
+
+      padding-left: 5px;
+
+      padding-right: 5px;
+
+    }

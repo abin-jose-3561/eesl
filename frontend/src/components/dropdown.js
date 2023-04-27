@@ -16,6 +16,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import '../App.css'
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -634,32 +635,40 @@ expandIcon={<ExpandMoreIcon />}
 
 
 
+<Box className='parentDate'>
+  <Box className='childDate'>
+  <LocalizationProvider dateAdapter={AdapterDayjs}>
 
+<Stack spacing={3}>
+<DesktopDatePicker
+  label="From-Date "
+  inputFormat="DD-MMYYYY"
+  className="my-date-picker"
+  onChange={handleDateChange}
+  renderInput={(params) => <TextField {...params} />}
+/>
+</Stack>
+</LocalizationProvider>
+  </Box>
+
+
+<Box className='childDate'>
 <LocalizationProvider dateAdapter={AdapterDayjs}>
-
-  <Stack spacing={3}>
+<Stack spacing={3}>
   <DesktopDatePicker
-    label="From-Date "
-    inputFormat="DD-MMYYYY"
-    className="my-date-picker"
-    onChange={handleDateChange}
-    renderInput={(params) => <TextField {...params} />}
- />
- </Stack>
- </LocalizationProvider>
+  label="To-Date "
+  inputFormat="DD-MMYYYY"
+  className="my-date-picker"
+  onChange={handleDateChange1}
+  renderInput={(params) => <TextField {...params} />}
+  />
+  </Stack>
+  </LocalizationProvider>
 
+</Box>
 
- <LocalizationProvider dateAdapter={AdapterDayjs}>
- <Stack spacing={3}>
-    <DesktopDatePicker
-    label="To-Date "
-    inputFormat="DD-MMYYYY"
-    className="my-date-picker"
-    onChange={handleDateChange1}
-    renderInput={(params) => <TextField {...params} />}
-    />
-    </Stack>
-    </LocalizationProvider>
+</Box>
+
 
 
 
