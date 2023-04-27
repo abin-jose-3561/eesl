@@ -461,10 +461,12 @@ console.log("optionname",optionname)
         <br/><br/>
         <Button variant="contained"  type="submit" value="Fetch" onClick={(e) => setShowtable(true)}>FETCH</Button>
         <br/><br/>
-</AccordionDetails>      
+</AccordionDetails> 
+
+{showtable && <DisplayData optionname={optionname} /> }
 
 </Accordion> 
-        {showtable && <DisplayData optionname={optionname} /> }
+        
 
         </>
   )
