@@ -3,6 +3,7 @@ import axios from "axios";
 import { useGlobalFilter, usePagination, useSortBy, useTable } from "react-table";
 import tw from "twin.macro";
 import { GlobalFilter } from "./globalfilter"; 
+import { format } from "date-fns";
 
 
 const Table = tw.table`
@@ -65,22 +66,55 @@ const DisplayData = ({optionname}) =>{
       .get(`http://localhost:5000/table/tabb${queryparams}`)
       .catch((err) => console.log(err));
 
-    if (response) {
-      const products = response.data;
-      console.log("Products: ", products);
-      setProducts(products);
-    }
-  };
-  const productsData = useMemo(()=> [...products], [products]);
+       if (response) {
 
-  const productsColumns = useMemo(
+       // const products = response.data;
+        
+       const products = response.data.map((product) => ({
+        
+       ...product,
+        
+         creation_date: format(new Date(product.creation_date), "dd-MM-yyyy"),//give the format of date here
+        
+       }));
+        
+        
+        console.log("Products: ", products);
+        
+      setProducts(products);
+        
+        }
+  };
+  //const productsData = useMemo(()=> [...products], [products]);
+  const productsData = useMemo(
+
+     () =>
+    
+    products.map((product) => ({
+    
+   ...product,
+    
+   date: product.creation_date,
+    
+    })),
+    
+    [products]
+    
+    );
+
+    const productsColumns = useMemo(
+
       () =>
-        products[0]
-          ? Object.keys(products[0])
-              .filter((key) => key !== "rating")
-              .map((key)=>{
-                  return {Header: key.toUpperCase().replace('_',' '), accessor: key,}
-                }): [], [products]);
+      
+     products[0]
+      
+     ? Object.keys(products[0])
+      
+     .filter((key) => key !== "date" ) // add the column hich you need to hide
+      
+     .map((key)=>{
+      return {Header: key.toUpperCase().replace('_',' '), accessor: key,}
+       }): [], [products]);
     
     
     const tableInstance = useTable(
@@ -91,12 +125,12 @@ const DisplayData = ({optionname}) =>{
     const { getTableProps, getTableBodyProps, headerGroups, page,nextPage,previousPage, prepareRow, preGlobalFilteredRows, setGlobalFilter, state }=tableInstance;
     
     useEffect(()=>{
-      fetchProducts();
-    },[]);
+      fetchProducts(optionname);
+    },[optionname]);
     
     return (
     <>
-  
+     <div className="table">
     <GlobalFilter  preGlobalFilteredRows={preGlobalFilteredRows} setGlobalFilter={setGlobalFilter} globalFilter={state.GlobalFilter}/>
     <Table {...getTableProps()}>
       <TableHead>
@@ -131,6 +165,7 @@ const DisplayData = ({optionname}) =>{
     <div align="center">
       <Button onClick={()=> previousPage()}>Previous</Button>
       <Button onClick={()=>nextPage()}>Next</Button>
+    </div>
     </div>
     </>
     )

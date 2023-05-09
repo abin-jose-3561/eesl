@@ -16,6 +16,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+import { SingleInputDateRangeField } from '@mui/x-date-pickers-pro/SingleInputDateRangeField';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -33,6 +36,7 @@ export default function Dropdown  () {
     const [lastcommdate,setLastcommdate]=useState([])
     const [value, setValue] = useState(dayjs("2022-11-24T21:11:54"));
     const [value1, setValue1] = useState(dayjs("2022-11-24T21:11:54"));
+    const [value2,setValue2] =useState('')
     
 
 //For storing the selected option's sequence ids 
@@ -383,33 +387,58 @@ else {
   };
 
 
- 
- //date change
 
- const handleDateChange = (e) => {
-  setShowtable(false)
-  setValue(e);
-  console.log("date", e)
-  const formatteddate = dayjs(e).format('YYYY-MM-DD');
-  console.log("FormatedDate",formatteddate)
-
-  setOptionname({
-    ...optionname,
-    optiondate : formatteddate,
-});
   
+//  date change
+
+const [startDate, setStartDate] = useState(null);
+const [endDate, setEndDate] = useState(null);
+
+//date change
+
+const handleDateChange = (e) => {
+setShowtable(false)
+setValue(e);
+console.log("date", e)
+const formatteddate = dayjs(e).format('YYYY-MM-DD');
+console.log("FormatedDate",formatteddate)
+
+setOptionname({
+  ...optionname,
+  optiondate : formatteddate,
+});
+
 };
 
- const handleDateChange1 = (e) => {
-    setShowtable(false);
-    setValue1(e);
-    const formatteddate1=dayjs(e).format('YYYY-MM-DD');
-    console.log("formatteddate1",formatteddate1)
-      setOptionname({
-    ...optionname,
-    optiondate1 : formatteddate1
- });
- };
+const handleDateChange1 = (e) => {
+  setShowtable(false);
+  setValue1(e);
+  const formatteddate1=dayjs(e).format('YYYY-MM-DD');
+  console.log("formatteddate1",formatteddate1)
+    setOptionname({
+  ...optionname,
+  optiondate1 : formatteddate1
+});
+};
+
+
+//  const handleDateChange2 = 
+//   (newValue) => {
+//     setShowtable(false);
+//     setStartDate(newValue[0]);
+//     setEndDate(newValue[1]);
+//     console.log("startDate",newValue[0])
+//     console.log("endDate",newValue[1])
+//     const formatteddate2=dayjs(newValue[0]).format('YYYY-MM-DD');
+//     console.log("formatteddate2",formatteddate2)
+//     const formatteddate3=dayjs(newValue[1]).format('YYYY-MM-DD');
+//     setOptionname({
+//       ...optionname,
+//       optiondate : formatteddate2,
+//       optiondate1 : formatteddate3
+//    });
+//   };
+  
 
   return (
     <> 
@@ -425,10 +454,9 @@ expandIcon={<ExpandMoreIcon />}
  </AccordionSummary>
  <AccordionDetails>
 
-    <Box align="center" display="flex" marginTop="20px" marginLeft="20px">
-    <div className="dropdown">
+    <Box align="center" display="flex" marginTop="20px" marginLeft="10px" marginRight="10px">
 
-      
+    <div className="dropdown">
 
         <Autocomplete
         multiple
@@ -579,10 +607,11 @@ expandIcon={<ExpandMoreIcon />}
       isOptionEqualToValue={(option, value) => option.value === value.value}
     />
  
- <div className='drop'>
-
+ 
+ {/* <div className='dropdown'> */}
 <Autocomplete
     multiple
+      disablePortal
       id="combo-box-demo"
       onChange={handleLastreadChange}
       options={[
@@ -592,19 +621,6 @@ expandIcon={<ExpandMoreIcon />}
           label: option.lastread_status,
         })),
       ]}
-      disableCloseOnSelect
-      getOptionLabel={(option) => option.label}
-      renderOption={(props, option, { selected }) => (
-        <li {...props}>
-          <Checkbox
-            icon={icon}
-            checkedIcon={checkedIcon}
-            style={{ marginRight: 8 }}
-            checked={selected}
-          />
-          {option.label}
-        </li>
-      )}
       sx={{ width: 200 }}
       renderInput={(params) => <TextField {...params} label="Last Read Status" />}
       isOptionEqualToValue={(option, value) => option.value === value.value}
@@ -623,7 +639,7 @@ expandIcon={<ExpandMoreIcon />}
                               label: option.last_commdate,
                                     })),
                                 ]}
-                              sx={{ width: 300, paddingBottom: 50}}
+                              sx={{ width: 250}}
                               renderInput={(params) => <TextField {...params} label="Last Communication Date" />}
                               isOptionEqualToValue={(option, value) => option.value === value.value}
 
@@ -631,51 +647,50 @@ expandIcon={<ExpandMoreIcon />}
 
 
 
- {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Stack spacing={3}>
-        <DesktopDatePicker
-          label="Date "
-          inputFormat="DD-MM-YYYY"
-          onChange={handleDateChange}
-          renderInput={(params) => <TextField {...params} />}
-          disableFuture={true}
-        />
-       
-      </Stack>
-    </LocalizationProvider>  */}
+    {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer components={['SingleInputDateRangeField']}>
+        <DateRangePicker slots={{ field: SingleInputDateRangeField }} 
+         startText="Start Date"
+         endText="End Date"
+         value={[startDate, endDate]}
+         onChange={handleDateChange2}/>
+      </DemoContainer>
+    </LocalizationProvider> */}
 
+    
+<LocalizationProvider dateAdapter={AdapterDayjs}>
 
+<Stack spacing={3}>
+<DesktopDatePicker
+  label="From-Date "
+  inputFormat="DD-MMYYYY"
+  className="my-date-picker"
+  onChange={handleDateChange}
+  views={['year', 'month', 'day']}
+  sx={{ width: 150 }}
+  renderInput={(params) => <TextField {...params} />}
+/>
+</Stack>
+</LocalizationProvider>
 
 
 <LocalizationProvider dateAdapter={AdapterDayjs}>
-
-  <Stack spacing={3}>
+<Stack spacing={3}>
   <DesktopDatePicker
-    label="From-Date "
-    inputFormat="DD-MMYYYY"
-    className="my-date-picker"
-    onChange={handleDateChange}
-    renderInput={(params) => <TextField {...params} />}
- />
- </Stack>
- </LocalizationProvider>
-
-
- <LocalizationProvider dateAdapter={AdapterDayjs}>
- <Stack spacing={3}>
-    <DesktopDatePicker
-    label="To-Date "
-    inputFormat="DD-MMYYYY"
-    className="my-date-picker"
-    onChange={handleDateChange1}
-    renderInput={(params) => <TextField {...params} />}
-    />
-    </Stack>
-    </LocalizationProvider>
+  label="To-Date "
+  inputFormat="DD-MMYYYY"
+  className="my-date-picker"
+  views={['year', 'month', 'day']}
+  onChange={handleDateChange1}
+  sx={{ width: 150 }}
+  renderInput={(params) => <TextField {...params} />}
+  />
+  </Stack>
+  </LocalizationProvider>
 
 
 
-</div>   
+{/* </div>     */}
  </div>
 
 </Box>
@@ -684,14 +699,14 @@ expandIcon={<ExpandMoreIcon />}
 
 
 <br/><br/>
-        <Button variant="contained"  type="submit" value="Fetch" onClick={(e) => setShowtable(true)}>FETCH</Button>
+        <Box align="center"><Button variant="contained"  type="submit" value="Fetch" onClick={(e) => setShowtable(true)}>FETCH</Button></Box>
        
  </AccordionDetails>
 
- {showtable && <DisplayData optionname={optionname} /> }    
+    
 
 </Accordion>
-
+{showtable && <DisplayData optionname={optionname} /> } 
 
 
         </>

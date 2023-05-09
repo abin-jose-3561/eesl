@@ -353,7 +353,7 @@ console.error(error.message);
     }
 
     if(optiondate) {
-        query += `AND creation_date1 BETWEEN '${optiondate}' AND '${optiondate1}'`
+        query += `AND creation_date BETWEEN '${optiondate}' AND '${optiondate1}'`
           
         // params.push(...subdivisionArray);
       }

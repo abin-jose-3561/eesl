@@ -17,6 +17,9 @@ const darkTheme = createTheme({
     primary: {
       main: '#1976d2',
     },
+    secondary: {
+      main: '#3275E9'
+    },
   },
 });
 
@@ -25,6 +28,9 @@ const lightTheme = createTheme({
     mode: 'light',
     primary: {
       main: '#white',
+    },
+    secondary: {
+      main: '#3275E9',
     },
   },
 });
@@ -45,13 +51,26 @@ export default function App() {
   //   setValue(newValue);
   // };
 
+  const paperStyle = {
+    position: 'fixed',
+    top: '0',
+    bottom: '0',
+    left: '0',
+    right: '0',
+     overflow: 'auto',
+
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex"
       alignItems="center"
       justifyContent="center"
-      height="100vh">
-      <Paper style={{ width: '100%', height: '100%',}}>
+      
+      width='100%'
+      position='absolute'>
+      
+      <Paper sx={{ width:'100%',  height: '100%',}} style={paperStyle}>
       <Layout theme={theme} handleThemeChange={handleThemeChange}/>
       </Paper>
       </Box>
@@ -61,5 +80,3 @@ export default function App() {
 
   );
 }
-
-
